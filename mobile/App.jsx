@@ -1,0 +1,167 @@
+import { useCallback, useEffect, useState } from 'react';
+import { View, StyleSheet } from 'react-native';
+import { StatusBar } from 'expo-status-bar';
+import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
+import * as SplashScreen from 'expo-splash-screen';
+import {
+  useFonts as useFraunces,
+  Fraunces_300Light,
+  Fraunces_300Light_Italic,
+  Fraunces_400Regular,
+  Fraunces_500Medium,
+} from '@expo-google-fonts/fraunces';
+import { DMSans_400Regular, DMSans_500Medium } from '@expo-google-fonts/dm-sans';
+
+import HomeScreen from './src/screens/HomeScreen';
+import LensScreen from './src/screens/LensScreen';
+import LoadingScreen from './src/screens/LoadingScreen';
+import ResponseScreen from './src/screens/ResponseScreen';
+import JournalScreen from './src/screens/JournalScreen';
+
+import { analyseKarma } from './src/api/client';
+import {
+  loadReflections,
+  saveReflection,
+  migrateLegacyReflections,
+} from './src/lib/storage';
+import { C } from './src/lib/colors';
+
+// Hold the splash screen until fonts load — prevents the flash-of-fallback-font.
+SplashScreen.preventAutoHideAsync().catch(() => {
+  /* ignore: app may have been hot-reloaded */
+});
+
+export default function App() {
+  const [fontsLoaded] = useFraunces({
+    Fraunces_300Light,
+    Fraunces_300Light_Italic,
+    Fraunces_400Regular,
+    Fraunces_500Medium,
+    DMSans_400Regular,
+    DMSans_500Medium,
+  });
+
+  const [view, setView] = useState('home'); // home | lens | loading | response | journal
+  const [userText, setUserText] = useState('');
+  const [emotionHint, setEmotionHint] = useState(null);
+  const [result, setResult] = useState(null);
+  const [error, setError] = useState(null);
+  const [reflections, setReflections] = useState([]);
+  const [savedFlag, setSavedFlag] = useState(false);
+  // Optional prefill — set when the user taps a home prompt that should
+  // pre-populate the Lens input (e.g. today's question).
+  const [lensPrefill, setLensPrefill] = useState('');
+
+  // Migrate any legacy local-only reflections, then load from backend.
+  useEffect(() => {
+    (async () => {
+      await migrateLegacyReflections();
+      const items = await loadReflections();
+      setReflections(items);
+    })();
+  }, []);
+
+  // Hide splash once fonts are ready.
+  const onLayout = useCallback(async () => {
+    if (fontsLoaded) {
+      await SplashScreen.hideAsync().catch(() => {});
+    }
+  }, [fontsLoaded]);
+
+  if (!fontsLoaded) return null;
+
+  async function handleSubmit(text, emotion) {
+    setUserText(text);
+    setEmotionHint(emotion);
+    setView('loading');
+    setError(null);
+    setSavedFlag(false);
+
+    try {
+      const r = await analyseKarma(text, emotion);
+      setResult(r);
+      setView('response');
+    } catch (e) {
+      setError(e.message);
+      setView('lens');
+    }
+  }
+
+  async function handleSave() {
+    if (savedFlag || !result) return;
+    const saved = await saveReflection({
+      analysisId: result.analysis_id,
+      userText,
+      result,
+    });
+    if (saved) {
+      setSavedFlag(true);
+      setReflections((prev) => [saved, ...prev]);
+    }
+  }
+
+  function openSaved(reflection) {
+    setUserText(reflection.input_text || '');
+    setEmotionHint(null);
+    setResult(reflection.response || null);
+    setSavedFlag(true);
+    setView('response');
+  }
+
+  /** Open the Lens, optionally pre-populating the input. */
+  function openLens(prefill = '') {
+    setError(null);
+    setLensPrefill(prefill);
+    setView('lens');
+  }
+
+  return (
+    <SafeAreaProvider>
+      <SafeAreaView style={styles.root} edges={['top', 'left', 'right']} onLayout={onLayout}>
+        <StatusBar style="dark" />
+        <View style={styles.container}>
+          {view === 'home' && (
+            <HomeScreen
+              onOpenLens={openLens}
+              onOpenJournal={() => setView('journal')}
+              reflectionCount={reflections.length}
+            />
+          )}
+
+          {view === 'lens' && (
+            <LensScreen
+              onBack={() => setView('home')}
+              onSubmit={handleSubmit}
+              error={error}
+              initialText={lensPrefill}
+            />
+          )}
+
+          {view === 'loading' && <LoadingScreen />}
+
+          {view === 'response' && result && (
+            <ResponseScreen
+              result={result}
+              onBack={() => setView(savedFlag ? 'journal' : 'lens')}
+              onSave={handleSave}
+              savedFlag={savedFlag}
+            />
+          )}
+
+          {view === 'journal' && (
+            <JournalScreen
+              reflections={reflections}
+              onBack={() => setView('home')}
+              onOpen={openSaved}
+            />
+          )}
+        </View>
+      </SafeAreaView>
+    </SafeAreaProvider>
+  );
+}
+
+const styles = StyleSheet.create({
+  root: { flex: 1, backgroundColor: C.parchment },
+  container: { flex: 1 },
+});
