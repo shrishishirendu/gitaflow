@@ -119,7 +119,35 @@ async def analyse(
             ),
         )
 
+    # Voice adaptation per user preference. Every call carries the user's
+    # tone, so the model can adjust register without us re-tuning the system
+    # prompt. Three real shifts:
+    #   simple_practical    — plain modern English, action-focused, no Sanskrit
+    #                         beyond what's already in the response shape
+    #   spiritual_reflective — slightly more contemplative, comfortable with
+    #                         brief Sanskrit terms when they teach
+    #   deep_philosophical  — lean into the Gita's structural concepts, use
+    #                         dharmic vocabulary where it sharpens meaning
+    tone = (user.get("tone_preference") or "simple_practical").lower()
+    tone_guidance = {
+        "simple_practical": (
+            "VOICE: Plain modern English. Action-focused. Minimal Sanskrit "
+            "beyond what the response shape already requires."
+        ),
+        "spiritual_reflective": (
+            "VOICE: Contemplative and warm. Sanskrit terms welcome when they "
+            "teach a concept English would need a paragraph for; always pair "
+            "with the English meaning."
+        ),
+        "deep_philosophical": (
+            "VOICE: Lean into the Gita's structural concepts. Dharmic "
+            "vocabulary is welcome where it sharpens meaning. The reader is "
+            "comfortable with depth; do not over-soften."
+        ),
+    }.get(tone, "VOICE: Plain modern English.")
+
     user_message = (
+        f"{tone_guidance}\n\n"
         f"USER SITUATION:\n{req.text}\n"
         + (f"\nUSER-TAGGED EMOTION: {req.emotion_hint}\n" if req.emotion_hint else "")
         + f"\nVERSE LIBRARY (pick one verse_id):\n{_VERSE_CATALOGUE}\n\n"

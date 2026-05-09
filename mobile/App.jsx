@@ -17,8 +17,12 @@ import LensScreen from './src/screens/LensScreen';
 import LoadingScreen from './src/screens/LoadingScreen';
 import ResponseScreen from './src/screens/ResponseScreen';
 import JournalScreen from './src/screens/JournalScreen';
+import JourneysScreen from './src/screens/JourneysScreen';
+import JourneyDayScreen from './src/screens/JourneyDayScreen';
+import OnboardingScreen from './src/screens/OnboardingScreen';
 
 import { analyseKarma } from './src/api/client';
+import { fetchMe } from './src/api/client';
 import {
   loadReflections,
   saveReflection,
@@ -41,20 +45,30 @@ export default function App() {
     DMSans_500Medium,
   });
 
-  const [view, setView] = useState('home'); // home | lens | loading | response | journal
+  // 'onboarding' | 'home' | 'lens' | 'loading' | 'response' | 'journal' | 'journeys' | 'journey_day'
+  // Start with `null` (unknown) so we don't flash the wrong screen before
+  // /api/users/me returns.
+  const [view, setView] = useState(null);
   const [userText, setUserText] = useState('');
   const [emotionHint, setEmotionHint] = useState(null);
   const [result, setResult] = useState(null);
   const [error, setError] = useState(null);
   const [reflections, setReflections] = useState([]);
   const [savedFlag, setSavedFlag] = useState(false);
-  // Optional prefill — set when the user taps a home prompt that should
-  // pre-populate the Lens input (e.g. today's question).
   const [lensPrefill, setLensPrefill] = useState('');
+  const [journeyDayCtx, setJourneyDayCtx] = useState({ progressId: null, dayNumber: 1 });
+  const [journeyTick, setJourneyTick] = useState(0);
 
-  // Migrate any legacy local-only reflections, then load from backend.
+  // Onboarding gate + reflection migration on mount.
   useEffect(() => {
     (async () => {
+      try {
+        const me = await fetchMe();
+        setView(me.onboarded_at ? 'home' : 'onboarding');
+      } catch {
+        setView('home'); // network failure — default to home, don't trap user
+      }
+
       await migrateLegacyReflections();
       const items = await loadReflections();
       setReflections(items);
@@ -115,16 +129,32 @@ export default function App() {
     setView('lens');
   }
 
+  function openJourneyDay(progressId, dayNumber) {
+    setJourneyDayCtx({ progressId, dayNumber });
+    setView('journey_day');
+  }
+
+  function bumpJourney() {
+    setJourneyTick((t) => t + 1);
+  }
+
   return (
     <SafeAreaProvider>
       <SafeAreaView style={styles.root} edges={['top', 'left', 'right']} onLayout={onLayout}>
         <StatusBar style="dark" />
         <View style={styles.container}>
+          {view === 'onboarding' && (
+            <OnboardingScreen onComplete={() => setView('home')} />
+          )}
+
           {view === 'home' && (
             <HomeScreen
               onOpenLens={openLens}
               onOpenJournal={() => setView('journal')}
+              onOpenJourneys={() => setView('journeys')}
+              onOpenJourneyDay={openJourneyDay}
               reflectionCount={reflections.length}
+              journeyTick={journeyTick}
             />
           )}
 
@@ -153,6 +183,24 @@ export default function App() {
               reflections={reflections}
               onBack={() => setView('home')}
               onOpen={openSaved}
+            />
+          )}
+
+          {view === 'journeys' && (
+            <JourneysScreen
+              onBack={() => setView('home')}
+              onOpenDay={openJourneyDay}
+            />
+          )}
+
+          {view === 'journey_day' && journeyDayCtx.progressId && (
+            <JourneyDayScreen
+              key={`${journeyDayCtx.progressId}:${journeyDayCtx.dayNumber}`}
+              progressId={journeyDayCtx.progressId}
+              dayNumber={journeyDayCtx.dayNumber}
+              onBack={() => { bumpJourney(); setView('home'); }}
+              onOpenLens={openLens}
+              onJourneyChanged={bumpJourney}
             />
           )}
         </View>

@@ -1,13 +1,13 @@
 import { useEffect, useRef, useState } from 'react';
 import {
-  ArrowRight, Bookmark, Cloud, CloudOff, Feather, PenLine, X, Sparkles,
+  ArrowRight, Bookmark, Cloud, CloudOff, Feather, PenLine, X, Compass,
 } from 'lucide-react';
 import {
   fetchReflectionCount,
   fetchTodayCheckin,
   saveCheckin,
   fetchHomeInsight,
-  fetchTodaysQuestion,
+  fetchActiveJourney,
 } from '../api/client';
 import { C } from '../lib/colors';
 
@@ -39,7 +39,10 @@ const ARRIVAL_CHIPS = [
   },
 ];
 
-export default function HomeView({ onOpenLens, onOpenJournal, reflectionCount, dailyVerse }) {
+export default function HomeView({
+  onOpenLens, onOpenJournal, onOpenJourneys, onOpenJourneyDay,
+  reflectionCount, dailyVerse, journeyTick = 0,
+}) {
   // Persistence indicator
   const [backendCount, setBackendCount] = useState(null);
   const [syncStatus, setSyncStatus] = useState('checking');
@@ -54,8 +57,8 @@ export default function HomeView({ onOpenLens, onOpenJournal, reflectionCount, d
   // Continuity strip
   const [insight, setInsight] = useState(null);
 
-  // Today's question
-  const [question, setQuestion] = useState(null);
+  // Active journey
+  const [activeJourney, setActiveJourney] = useState(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -72,12 +75,12 @@ export default function HomeView({ onOpenLens, onOpenJournal, reflectionCount, d
       .then((d) => { if (!cancelled) setInsight(d); })
       .catch(() => {});
 
-    fetchTodaysQuestion()
-      .then((d) => { if (!cancelled) setQuestion(d.question); })
+    fetchActiveJourney()
+      .then((d) => { if (!cancelled) setActiveJourney(d.active); })
       .catch(() => {});
 
     return () => { cancelled = true; };
-  }, []);
+  }, [journeyTick]);
 
   async function handleCheckin(emotion) {
     if (savingCheckin || todayEmotion === emotion) return;
@@ -263,33 +266,57 @@ export default function HomeView({ onOpenLens, onOpenJournal, reflectionCount, d
         </div>
       )}
 
-      {/* ── HERO: Today's Question ─────────────────────────────────────── */}
-      {question && (
+      {/* ── Active Journey card (when one exists) ──────────────────────── */}
+      {activeJourney && (
         <div
-          className="mb-10 rounded-md py-6 px-6 fade-up cursor-pointer transition active:scale-[0.99]"
+          className="mb-8 rounded-md fade-up cursor-pointer transition active:scale-[0.99] overflow-hidden"
           style={{
-            background: C.ink,
-            color: C.paper,
+            background: C.paper,
+            border: `1px solid ${C.gold}55`,
+            boxShadow: '0 1px 0 rgba(31,24,20,0.04)',
           }}
-          onClick={() => onOpenLens(`Reflecting on this: ${question}\n\n`)}
+          onClick={() => onOpenJourneyDay(activeJourney.progress_id, activeJourney.current_day)}
         >
-          <div className="flex items-start gap-2 mb-3 opacity-70">
-            <Sparkles size={12} />
-            <span className="font-body text-[10px] tracking-[0.22em]">
-              TODAY'S QUESTION
-            </span>
+          {/* Progress dots strip */}
+          <div className="flex gap-1 px-5 pt-5 pb-3">
+            {Array.from({ length: activeJourney.duration_days }).map((_, i) => {
+              const dayNum = i + 1;
+              const isDone = dayNum <= activeJourney.days_completed;
+              const isCurrent = dayNum === activeJourney.current_day;
+              return (
+                <div
+                  key={i}
+                  className="flex-1 h-1 rounded-full"
+                  style={{
+                    background: isDone ? C.sage : (isCurrent ? C.gold : 'rgba(31,24,20,0.10)'),
+                  }}
+                />
+              );
+            })}
           </div>
-          <p
-            className="font-display italic text-[22px] leading-[1.3]"
-            style={{ fontWeight: 350 }}
-          >
-            "{question}"
-          </p>
-          <div
-            className="flex items-center justify-end gap-1.5 mt-4 font-body text-[11px] opacity-60"
-          >
-            <span>Sit with it</span>
-            <ArrowRight size={11} />
+          <div className="px-5 pb-5">
+            <div className="flex items-center gap-2 mb-2" style={{ color: C.gold }}>
+              <Compass size={12} />
+              <span className="font-body text-[10px] tracking-[0.22em]">
+                JOURNEY · DAY {activeJourney.current_day} OF {activeJourney.duration_days}
+              </span>
+            </div>
+            <h3
+              className="font-display text-[22px] leading-tight mb-1"
+              style={{ color: C.ink, fontWeight: 400 }}
+            >
+              {activeJourney.journey_title}
+            </h3>
+            <p
+              className="font-display italic text-[14px]"
+              style={{ color: C.inkMute, fontWeight: 350 }}
+            >
+              {activeJourney.journey_subtitle}
+            </p>
+            <div className="flex items-center justify-end gap-1.5 mt-3 font-body text-[12px]" style={{ color: C.inkSoft }}>
+              <span>{activeJourney.current_day_is_unlocked ? 'Continue' : 'Sit with yesterday'}</span>
+              <ArrowRight size={12} />
+            </div>
           </div>
         </div>
       )}
@@ -373,6 +400,27 @@ export default function HomeView({ onOpenLens, onOpenJournal, reflectionCount, d
         </div>
         <ArrowRight size={20} />
       </button>
+
+      {/* ── Journeys entry (only if no active journey, otherwise it's already shown above) ── */}
+      {!activeJourney && (
+        <button
+          onClick={onOpenJourneys}
+          className="w-full mt-3 rounded-md py-4 px-5 flex items-center justify-between transition"
+          style={{
+            background: 'transparent',
+            color: C.inkSoft,
+            border: '1px solid rgba(31,24,20,0.15)',
+          }}
+        >
+          <div className="flex items-center gap-3">
+            <Compass size={16} />
+            <span className="font-body text-[14px]">Walk through a teaching</span>
+          </div>
+          <span className="font-body text-[12px]" style={{ color: C.inkMute }}>
+            Journeys
+          </span>
+        </button>
+      )}
 
       {/* ── Journal access ─────────────────────────────────────────────── */}
       <button

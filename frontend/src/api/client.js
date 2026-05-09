@@ -99,12 +99,98 @@ export async function fetchTodaysQuestion() {
   return jsonOrThrow(response);
 }
 
+// ─────────────────────────────────────────────────────────────────────────
+// User / onboarding
+// ─────────────────────────────────────────────────────────────────────────
+export async function fetchMe() {
+  const r = await fetch(`${API_BASE}/api/users/me`, { headers: headers() });
+  return jsonOrThrow(r);
+}
+
+export async function saveOnboarding({ intention, tonePreference, dailyReminderOptIn }) {
+  const r = await fetch(`${API_BASE}/api/users/onboarding`, {
+    method: 'POST',
+    headers: headers(),
+    body: JSON.stringify({
+      intention: intention,
+      tone_preference: tonePreference,
+      daily_reminder_opt_in: !!dailyReminderOptIn,
+    }),
+  });
+  return jsonOrThrow(r);
+}
+
+export async function fetchWelcomeVerse() {
+  // Public endpoint — no auth headers required, but they don't hurt.
+  const r = await fetch(`${API_BASE}/api/welcome/verse`, { headers: headers() });
+  return jsonOrThrow(r);
+}
+
 export async function fetchHomeVerse() {
   const response = await fetch(`${API_BASE}/api/home/verse`, {
     method: 'GET',
     headers: headers(),
   });
   return jsonOrThrow(response);
+}
+
+// ─────────────────────────────────────────────────────────────────────────
+// Journeys
+// ─────────────────────────────────────────────────────────────────────────
+export async function fetchJourneys() {
+  const r = await fetch(`${API_BASE}/api/journeys`, { headers: headers() });
+  return jsonOrThrow(r);
+}
+
+export async function fetchActiveJourney() {
+  const r = await fetch(`${API_BASE}/api/journeys/active`, { headers: headers() });
+  return jsonOrThrow(r);
+}
+
+export async function fetchJourney(slug) {
+  const r = await fetch(`${API_BASE}/api/journeys/${slug}`, { headers: headers() });
+  return jsonOrThrow(r);
+}
+
+export async function startJourney(slug) {
+  const r = await fetch(`${API_BASE}/api/journeys/${slug}/start`, {
+    method: 'POST', headers: headers(),
+  });
+  return jsonOrThrow(r);
+}
+
+export async function pauseActiveJourney() {
+  const r = await fetch(`${API_BASE}/api/journeys/active/pause`, {
+    method: 'POST', headers: headers(),
+  });
+  return jsonOrThrow(r);
+}
+
+export async function resumeJourney(progressId) {
+  const r = await fetch(`${API_BASE}/api/journeys/${progressId}/resume`, {
+    method: 'POST', headers: headers(),
+  });
+  return jsonOrThrow(r);
+}
+
+export async function fetchJourneyDay(progressId, dayNumber) {
+  const r = await fetch(
+    `${API_BASE}/api/journeys/progress/${progressId}/day/${dayNumber}`,
+    { headers: headers() }
+  );
+  return jsonOrThrow(r);
+}
+
+export async function completeJourneyDay(progressId, dayNumber, userResponse) {
+  const r = await fetch(
+    `${API_BASE}/api/journeys/progress/${progressId}/day/${dayNumber}`,
+    {
+      method: 'POST',
+      headers: headers(),
+      body: JSON.stringify({ user_response: userResponse }),
+    }
+  );
+  return jsonOrThrow(r);
 }
 
 export async function deleteReflectionFromBackend(reflectionId) {

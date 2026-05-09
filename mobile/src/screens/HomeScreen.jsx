@@ -14,8 +14,8 @@ import {
   fetchTodayCheckin,
   saveCheckin,
   fetchHomeInsight,
-  fetchTodaysQuestion,
   fetchHomeVerse,
+  fetchActiveJourney,
 } from '../api/client';
 import { C } from '../lib/colors';
 
@@ -27,16 +27,19 @@ const ARRIVAL_CHIPS = [
   { value: 'weighing', label: 'Weighing', description: 'heavy · stuck · tender',    tint: '#E8DDD6', activeTint: '#8E5C42' },
 ];
 
-export default function HomeScreen({ onOpenLens, onOpenJournal, reflectionCount }) {
+export default function HomeScreen({
+  onOpenLens, onOpenJournal, onOpenJourneys, onOpenJourneyDay,
+  reflectionCount, journeyTick = 0,
+}) {
   const [dailyVerse, setDailyVerse] = useState(null);
   const [backendCount, setBackendCount] = useState(null);
   const [syncStatus, setSyncStatus] = useState('checking');
   const [todayEmotion, setTodayEmotion] = useState(null);
   const [savingCheckin, setSavingCheckin] = useState(false);
   const [insight, setInsight] = useState(null);
-  const [question, setQuestion] = useState(null);
   const [showFreeText, setShowFreeText] = useState(false);
   const [freeText, setFreeText] = useState('');
+  const [activeJourney, setActiveJourney] = useState(null);
   const inputRef = useRef(null);
 
   useEffect(() => {
@@ -48,10 +51,10 @@ export default function HomeScreen({ onOpenLens, onOpenJournal, reflectionCount 
       .catch(() => { if (!cancelled) setSyncStatus('offline'); });
     fetchTodayCheckin().then((d) => { if (!cancelled) setTodayEmotion(d.emotion); }).catch(() => {});
     fetchHomeInsight().then((d) => { if (!cancelled) setInsight(d); }).catch(() => {});
-    fetchTodaysQuestion().then((d) => { if (!cancelled) setQuestion(d.question); }).catch(() => {});
+    fetchActiveJourney().then((d) => { if (!cancelled) setActiveJourney(d.active); }).catch(() => {});
 
     return () => { cancelled = true; };
-  }, []);
+  }, [journeyTick]);
 
   async function handleCheckin(emotion) {
     if (savingCheckin || todayEmotion === emotion) return;
@@ -185,23 +188,47 @@ export default function HomeScreen({ onOpenLens, onOpenJournal, reflectionCount 
         </View>
       ) : null}
 
-      {/* HERO: today's question */}
-      {question ? (
+      {/* Active Journey card */}
+      {activeJourney ? (
         <Pressable
-          onPress={() => onOpenLens(`Reflecting on this: ${question}\n\n`)}
+          onPress={() => onOpenJourneyDay(activeJourney.progress_id, activeJourney.current_day)}
           style={({ pressed }) => [
-            styles.questionCard,
+            styles.journeyCard,
             pressed && { transform: [{ scale: 0.99 }] },
           ]}
         >
-          <View style={styles.questionHeader}>
-            <Feather name="star" size={11} color={C.paper} style={{ opacity: 0.7 }} />
-            <Text style={styles.questionKicker}>TODAY'S QUESTION</Text>
+          {/* Progress dots strip */}
+          <View style={styles.journeyDots}>
+            {Array.from({ length: activeJourney.duration_days }).map((_, i) => {
+              const dayNum = i + 1;
+              const isDone = dayNum <= activeJourney.days_completed;
+              const isCurrent = dayNum === activeJourney.current_day;
+              return (
+                <View
+                  key={i}
+                  style={[
+                    styles.journeyDot,
+                    {
+                      backgroundColor: isDone ? C.sage : (isCurrent ? C.gold : 'rgba(31,24,20,0.10)'),
+                    },
+                  ]}
+                />
+              );
+            })}
           </View>
-          <Text style={styles.questionText}>"{question}"</Text>
-          <View style={styles.questionFoot}>
-            <Text style={styles.questionFootLabel}>Sit with it</Text>
-            <Feather name="arrow-right" size={11} color={C.paper} style={{ opacity: 0.6 }} />
+          <View style={styles.journeyHeader}>
+            <Feather name="compass" size={12} color={C.gold} />
+            <Text style={styles.journeyKicker}>
+              JOURNEY · DAY {activeJourney.current_day} OF {activeJourney.duration_days}
+            </Text>
+          </View>
+          <Text style={styles.journeyTitle}>{activeJourney.journey_title}</Text>
+          <Text style={styles.journeySubtitle}>{activeJourney.journey_subtitle}</Text>
+          <View style={styles.journeyFoot}>
+            <Text style={styles.journeyFootLabel}>
+              {activeJourney.current_day_is_unlocked ? 'Continue' : 'Sit with yesterday'}
+            </Text>
+            <Feather name="arrow-right" size={12} color={C.inkSoft} />
           </View>
         </Pressable>
       ) : null}
@@ -249,6 +276,17 @@ export default function HomeScreen({ onOpenLens, onOpenJournal, reflectionCount 
         </View>
         <Feather name="arrow-right" size={20} color={C.paper} />
       </Pressable>
+
+      {/* Journeys (when no active journey, otherwise it's already shown above) */}
+      {!activeJourney ? (
+        <Pressable onPress={onOpenJourneys} style={styles.secondaryBtn}>
+          <View style={styles.secondaryLeft}>
+            <Feather name="compass" size={16} color={C.inkSoft} />
+            <Text style={styles.secondaryLabel}>Walk through a teaching</Text>
+          </View>
+          <Text style={styles.secondaryCount}>Journeys</Text>
+        </Pressable>
+      ) : null}
 
       {/* Journal */}
       <Pressable onPress={onOpenJournal} style={styles.secondaryBtn}>
@@ -328,19 +366,30 @@ const styles = StyleSheet.create({
     fontSize: 15, lineHeight: 21, color: C.inkSoft,
   },
 
-  // Today's question — hero
-  questionCard: {
-    backgroundColor: C.ink, borderRadius: 8,
-    paddingVertical: 24, paddingHorizontal: 22, marginBottom: 32,
+  // Active journey card
+  journeyCard: {
+    backgroundColor: C.paper,
+    borderRadius: 8, borderWidth: 1, borderColor: 'rgba(156,122,58,0.33)',
+    marginBottom: 24,
+    overflow: 'hidden',
   },
-  questionHeader: { flexDirection: 'row', alignItems: 'center', marginBottom: 12, gap: 8 },
-  questionKicker: { color: C.paper, fontFamily: 'DMSans_400Regular', fontSize: 10, letterSpacing: 2.2, opacity: 0.7 },
-  questionText: {
-    color: C.paper, fontFamily: 'Fraunces_300Light_Italic', fontStyle: 'italic',
-    fontSize: 22, lineHeight: 29,
+  journeyDots: {
+    flexDirection: 'row', gap: 4,
+    paddingHorizontal: 18, paddingTop: 18, paddingBottom: 12,
   },
-  questionFoot: { flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end', gap: 6, marginTop: 16, opacity: 0.6 },
-  questionFootLabel: { color: C.paper, fontFamily: 'DMSans_400Regular', fontSize: 11 },
+  journeyDot: { flex: 1, height: 4, borderRadius: 2 },
+  journeyHeader: {
+    flexDirection: 'row', alignItems: 'center',
+    paddingHorizontal: 18, marginBottom: 8, gap: 8,
+  },
+  journeyKicker: { fontFamily: 'DMSans_400Regular', fontSize: 10, letterSpacing: 2.2, color: C.gold },
+  journeyTitle: { fontFamily: 'Fraunces_400Regular', fontSize: 22, lineHeight: 26, color: C.ink, paddingHorizontal: 18, marginBottom: 4 },
+  journeySubtitle: { fontFamily: 'Fraunces_300Light_Italic', fontStyle: 'italic', fontSize: 14, color: C.inkMute, paddingHorizontal: 18 },
+  journeyFoot: {
+    flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end',
+    gap: 6, paddingHorizontal: 18, paddingTop: 12, paddingBottom: 18,
+  },
+  journeyFootLabel: { color: C.inkSoft, fontFamily: 'DMSans_400Regular', fontSize: 12 },
 
   // Verse card
   verseWrapper: { position: 'relative', marginBottom: 28 },

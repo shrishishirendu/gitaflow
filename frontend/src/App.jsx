@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { analyseKarma, fetchHomeVerse } from './api/client';
+import { analyseKarma, fetchHomeVerse, fetchMe } from './api/client';
 import {
   loadReflections,
   saveReflection,
@@ -11,9 +11,16 @@ import LensView from './views/LensView';
 import LoadingView from './views/LoadingView';
 import ResponseView from './views/ResponseView';
 import JournalView from './views/JournalView';
+import JourneysView from './views/JourneysView';
+import JourneyDayView from './views/JourneyDayView';
+import OnboardingFlow from './views/OnboardingFlow';
 
 export default function App() {
-  const [view, setView] = useState('home');
+  // 'onboarding' | 'home' | 'lens' | 'loading' | 'response' | 'journal' | 'journeys' | 'journey_day'
+  // Start with `null` (loading) so we don't flash the wrong screen before
+  // /api/users/me returns. Once we know whether onboarded_at is set, we
+  // route to either 'onboarding' or 'home'.
+  const [view, setView] = useState(null);
   const [userText, setUserText] = useState('');
   const [emotionHint, setEmotionHint] = useState(null);
   const [result, setResult] = useState(null);
@@ -22,9 +29,22 @@ export default function App() {
   const [savedFlag, setSavedFlag] = useState(false);
   const [dailyVerse, setDailyVerse] = useState(null);
   const [lensPrefill, setLensPrefill] = useState('');
+  const [journeyDayCtx, setJourneyDayCtx] = useState({ progressId: null, dayNumber: 1 });
+  const [journeyTick, setJourneyTick] = useState(0);
 
   useEffect(() => {
     (async () => {
+      // Onboarding gate: ask the backend whether this device's user has
+      // been onboarded. If the call fails (offline), default to 'home' so
+      // existing users aren't trapped on the onboarding screen.
+      try {
+        const me = await fetchMe();
+        setView(me.onboarded_at ? 'home' : 'onboarding');
+      } catch {
+        setView('home');
+      }
+
+      // These don't depend on onboarding state — kick them off in parallel
       await migrateLegacyReflections();
       const items = await loadReflections();
       setReflections(items);
@@ -41,7 +61,6 @@ export default function App() {
     setView('loading');
     setError(null);
     setSavedFlag(false);
-
     try {
       const r = await analyseKarma(text, emotion);
       setResult(r);
@@ -55,9 +74,7 @@ export default function App() {
   async function handleSave() {
     if (savedFlag || !result) return;
     const saved = await saveReflection({
-      analysisId: result.analysis_id,
-      userText,
-      result,
+      analysisId: result.analysis_id, userText, result,
     });
     if (saved) {
       setSavedFlag(true);
@@ -79,18 +96,34 @@ export default function App() {
     setView('lens');
   }
 
+  function openJourneyDay(progressId, dayNumber) {
+    setJourneyDayCtx({ progressId, dayNumber });
+    setView('journey_day');
+  }
+
+  function bumpJourney() {
+    setJourneyTick((t) => t + 1);
+  }
+
   return (
-    <div
-      className="font-body grain min-h-screen"
-      style={{ background: C.parchment, color: C.ink }}
-    >
+    <div className="font-body grain min-h-screen" style={{ background: C.parchment, color: C.ink }}>
       <div className="max-w-md mx-auto relative">
+        {/* Loading state: show nothing while we figure out if user is onboarded */}
+        {view === null && null}
+
+        {view === 'onboarding' && (
+          <OnboardingFlow onComplete={() => setView('home')} />
+        )}
+
         {view === 'home' && (
           <HomeView
             onOpenLens={openLens}
             onOpenJournal={() => setView('journal')}
+            onOpenJourneys={() => setView('journeys')}
+            onOpenJourneyDay={openJourneyDay}
             reflectionCount={reflections.length}
             dailyVerse={dailyVerse}
+            journeyTick={journeyTick}
           />
         )}
 
@@ -119,6 +152,24 @@ export default function App() {
             reflections={reflections}
             onBack={() => setView('home')}
             onOpen={openSaved}
+          />
+        )}
+
+        {view === 'journeys' && (
+          <JourneysView
+            onBack={() => setView('home')}
+            onOpenDay={openJourneyDay}
+          />
+        )}
+
+        {view === 'journey_day' && journeyDayCtx.progressId && (
+          <JourneyDayView
+            key={`${journeyDayCtx.progressId}:${journeyDayCtx.dayNumber}`}
+            progressId={journeyDayCtx.progressId}
+            dayNumber={journeyDayCtx.dayNumber}
+            onBack={() => { bumpJourney(); setView('home'); }}
+            onOpenLens={openLens}
+            onJourneyChanged={bumpJourney}
           />
         )}
       </div>

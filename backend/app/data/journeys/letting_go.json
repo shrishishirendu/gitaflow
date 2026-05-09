@@ -1,0 +1,97 @@
+{
+  "slug": "letting_go",
+  "title": "Letting Go",
+  "subtitle": "Seven days with what you carry",
+  "description": "We all hold something tightly — a person, an outcome, a version of ourselves we want to be. The Bhagavad Gita's most famous teaching is about the freedom that comes from full action without grasping for the result. This week, we walk through that practice — not as philosophy, but as something you do.",
+  "category": "universal",
+  "duration_days": 7,
+  "estimated_minutes_per_day": 5,
+  "days": [
+    {
+      "day_number": 1,
+      "title": "What you carry",
+      "kicker": "DAY 1 · WHAT YOU CARRY",
+      "framing": "Before we can let go of something, we have to see clearly what we're holding. Not judge it. Not fix it. Just notice it.",
+      "verse_id": "BG_2_62",
+      "context": "The Gita observes that what we contemplate, we attach to. The mind doesn't grasp randomly — it grasps the things it returns to most. So today's question isn't 'what are you attached to?' It's: what does your mind keep coming back to, when you let it wander?",
+      "prompt_label": "What's something you've been thinking about a lot lately?",
+      "prompt_placeholder": "A person, a goal, an outcome, a worry. Just name it.",
+      "thread_back": false,
+      "karma_lens_entry": false
+    },
+    {
+      "day_number": 2,
+      "title": "The cost",
+      "kicker": "DAY 2 · WHAT IT COSTS",
+      "framing": "Yesterday you named what you carry. Today we look at what carrying it actually takes from you.",
+      "verse_id": "BG_2_70",
+      "context": "There's a difference between holding something and being held by it. When the mind is bound to a desire, the desire colors everything else — sleep, conversations, presence. Today, just notice what your attachment costs you in a normal day.",
+      "prompt_label": "When this is heavy on your mind, what does it take from you?",
+      "prompt_placeholder": "Sleep? Calm? Time? Presence with people you love?",
+      "thread_back": true,
+      "karma_lens_entry": false
+    },
+    {
+      "day_number": 3,
+      "title": "The grip",
+      "kicker": "DAY 3 · WHY YOU CAN'T LET GO",
+      "framing": "Knowing what something costs us isn't enough to release it. There's something else holding the grip in place. Today, we look at that.",
+      "verse_id": "BG_3_27",
+      "context": "We tell ourselves we're choosing to hold on, but the Gita names a deeper truth: often we're being held by patterns running underneath conscious choice. Fear of what life looks like without this thing. Identity built around wanting it. Old loyalties. Today, look honestly: what would you have to admit if you let this go?",
+      "prompt_label": "What do you think you'd lose if you stopped holding this?",
+      "prompt_placeholder": "Be honest — even if it sounds illogical.",
+      "thread_back": false,
+      "karma_lens_entry": true,
+      "karma_lens_prompt": "I'm noticing what I'm afraid I'd lose if I let go of this:\n\n"
+    },
+    {
+      "day_number": 4,
+      "title": "Small releases",
+      "kicker": "DAY 4 · A SMALL RELEASE",
+      "framing": "Letting go of the big thing all at once isn't real. It's a story we tell ourselves to avoid the practice. Real release happens in small, ordinary moments — and builds.",
+      "verse_id": "BG_6_5",
+      "context": "The Gita says: lift yourself by yourself. The mind is your only friend, and your only enemy. Today, don't try to release the big thing. Instead, find one small place — a small attachment, a small story, a small expectation — and practice letting it go just for today.",
+      "prompt_label": "What's one small thing you can release today?",
+      "prompt_placeholder": "Maybe a need to be right in a conversation. A texture of a worry. A small grudge.",
+      "thread_back": true,
+      "karma_lens_entry": false
+    },
+    {
+      "day_number": 5,
+      "title": "The grief",
+      "kicker": "DAY 5 · THE GRIEF",
+      "framing": "Letting go is loss. Even of things that hurt us. The Gita doesn't pretend otherwise. Today, give the grief its place.",
+      "verse_id": "BG_2_14",
+      "context": "Krishna tells Arjuna: the contacts of the senses bring heat and cold, pleasure and pain. They come and they go. They are not permanent. Endure them. There's no spiritual bypass here — no 'rise above it.' Just: feel what's true, and know it's part of the rhythm. Today, let yourself grieve what you're releasing without trying to be done with it.",
+      "prompt_label": "What does it feel like to imagine actually letting this go?",
+      "prompt_placeholder": "Anger? Sadness? Relief mixed with fear? All of these are okay.",
+      "thread_back": false,
+      "karma_lens_entry": false
+    },
+    {
+      "day_number": 6,
+      "title": "What remains",
+      "kicker": "DAY 6 · WHAT WAS ALWAYS FREE",
+      "framing": "When we're caught in attachment, we forget what's underneath it. Today, we look at what doesn't need this thing to be okay.",
+      "verse_id": "BG_2_20",
+      "context": "There's a part of you that watches the attachment. It has been watching this whole journey. It is not the part that wants. It is not the part that fears. The Gita points at this part — the witness — as something that doesn't depend on getting what it wants. Today, briefly, notice this in yourself.",
+      "prompt_label": "What in you doesn't need this thing to be okay?",
+      "prompt_placeholder": "Take your time. This is harder to find than the wanting.",
+      "thread_back": false,
+      "karma_lens_entry": false
+    },
+    {
+      "day_number": 7,
+      "title": "Carrying it forward",
+      "kicker": "DAY 7 · CARRYING IT FORWARD",
+      "framing": "Real change isn't a single act of letting go. It's a way of holding things differently. This is the practice the Gita actually teaches.",
+      "verse_id": "BG_2_47",
+      "context": "Here is the line the Gita is most famous for, and now you have a context for it. Your right is to action — to engaging fully with your life, your work, your people. Not to the fruit. Not to controlling how it lands. The work this week wasn't to stop wanting. It was to want without being owned by what you want. Carry that forward.",
+      "prompt_label": "How will you hold this thing differently from now on?",
+      "prompt_placeholder": "Not 'I'll stop caring.' Something honest.",
+      "thread_back": true,
+      "karma_lens_entry": false,
+      "is_final_day": true
+    }
+  ]
+}

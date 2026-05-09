@@ -5,6 +5,9 @@ from app.api.routes_karma_lens import router as karma_lens_router
 from app.api.routes_reflections import router as reflections_router
 from app.api.routes_checkins import router as checkins_router
 from app.api.routes_home import router as home_router
+from app.api.routes_journeys import router as journeys_router
+from app.api.routes_users import router as users_router
+from app.api.routes_welcome import router as welcome_router
 from app.db.database import init_db
 
 app = FastAPI(
@@ -35,6 +38,9 @@ app.include_router(karma_lens_router, prefix="/api")
 app.include_router(reflections_router, prefix="/api")
 app.include_router(checkins_router, prefix="/api")
 app.include_router(home_router, prefix="/api")
+app.include_router(journeys_router, prefix="/api")
+app.include_router(users_router, prefix="/api")
+app.include_router(welcome_router, prefix="/api")
 
 
 @app.get("/")

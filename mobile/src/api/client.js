@@ -159,6 +159,21 @@ export async function fetchTodaysQuestion() {
   return jsonOrThrow(response);
 }
 
+// ─────────────────────────────────────────────────────────────────────────
+// User / onboarding
+// ─────────────────────────────────────────────────────────────────────────
+export const fetchMe = () => _get('/api/users/me');
+
+export async function saveOnboarding({ intention, tonePreference, dailyReminderOptIn }) {
+  return _post('/api/users/onboarding', {
+    intention: intention,
+    tone_preference: tonePreference,
+    daily_reminder_opt_in: !!dailyReminderOptIn,
+  });
+}
+
+export const fetchWelcomeVerse = () => _get('/api/welcome/verse');
+
 export async function fetchHomeVerse() {
   let response;
   try {
@@ -171,6 +186,38 @@ export async function fetchHomeVerse() {
   }
   return jsonOrThrow(response);
 }
+
+// ─────────────────────────────────────────────────────────────────────────
+// Journeys
+// ─────────────────────────────────────────────────────────────────────────
+async function _get(path) {
+  let r;
+  try {
+    r = await fetch(`${API_BASE}${path}`, { headers: await buildHeaders() });
+  } catch { throw networkError(); }
+  return jsonOrThrow(r);
+}
+async function _post(path, body) {
+  let r;
+  try {
+    r = await fetch(`${API_BASE}${path}`, {
+      method: 'POST',
+      headers: await buildHeaders(),
+      body: body ? JSON.stringify(body) : undefined,
+    });
+  } catch { throw networkError(); }
+  return jsonOrThrow(r);
+}
+
+export const fetchJourneys        = ()                     => _get('/api/journeys');
+export const fetchActiveJourney   = ()                     => _get('/api/journeys/active');
+export const fetchJourney         = (slug)                 => _get(`/api/journeys/${slug}`);
+export const startJourney         = (slug)                 => _post(`/api/journeys/${slug}/start`);
+export const pauseActiveJourney   = ()                     => _post('/api/journeys/active/pause');
+export const resumeJourney        = (progressId)           => _post(`/api/journeys/${progressId}/resume`);
+export const fetchJourneyDay      = (progressId, day)      => _get(`/api/journeys/progress/${progressId}/day/${day}`);
+export const completeJourneyDay   = (progressId, day, txt) =>
+  _post(`/api/journeys/progress/${progressId}/day/${day}`, { user_response: txt });
 
 export async function deleteReflectionFromBackend(reflectionId) {
   let response;
