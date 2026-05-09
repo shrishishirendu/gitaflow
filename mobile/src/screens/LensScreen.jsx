@@ -37,7 +37,7 @@ export default function LensScreen({ onBack, onSubmit, error, initialText = '' }
 
         {error ? (
           <View style={styles.errorBox}>
-            <Text style={styles.errorText}>Something interrupted: {error}</Text>
+            <Text style={styles.errorText}>{cleanErrorMessage(error)}</Text>
           </View>
         ) : null}
 
@@ -162,3 +162,23 @@ const styles = StyleSheet.create({
     marginRight: 8,
   },
 });
+
+/**
+ * Sanitize backend error messages for display.
+ * Mirrors the same helper on the web LensView. Keeps the user from ever
+ * seeing JSON dumps, stack traces, or technical error formats.
+ */
+function cleanErrorMessage(raw) {
+  if (!raw || typeof raw !== 'string') {
+    return 'Something interrupted. Please try again.';
+  }
+  const looksTechnical = /[\{\[\\]|"detail":|JSON|Traceback|at .+\..+:\d/.test(raw);
+  if (looksTechnical) {
+    return 'Something interrupted. Please try again in a moment.';
+  }
+  const stripped = raw.replace(/^(Backend error \d+:|HTTP \d+:|Error:)\s*/i, '').trim();
+  if (!stripped || stripped.length > 200) {
+    return 'Something interrupted. Please try again in a moment.';
+  }
+  return stripped;
+}

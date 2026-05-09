@@ -174,6 +174,18 @@ export async function saveOnboarding({ intention, tonePreference, dailyReminderO
 
 export const fetchWelcomeVerse = () => _get('/api/welcome/verse');
 
+// ─────────────────────────────────────────────────────────────────────────
+// Dashboard
+// ─────────────────────────────────────────────────────────────────────────
+export const fetchDashboard = () => _get('/api/dashboard');
+
+// ─────────────────────────────────────────────────────────────────────────
+// Gita Explorer
+// ─────────────────────────────────────────────────────────────────────────
+export const fetchChapters = ()      => _get('/api/gita/chapters');
+export const fetchChapter  = (n)     => _get(`/api/gita/chapters/${n}`);
+export const fetchVerse    = (vid)   => _get(`/api/gita/verses/${vid}`);
+
 export async function fetchHomeVerse() {
   let response;
   try {

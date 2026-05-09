@@ -20,6 +20,9 @@ import JournalScreen from './src/screens/JournalScreen';
 import JourneysScreen from './src/screens/JourneysScreen';
 import JourneyDayScreen from './src/screens/JourneyDayScreen';
 import OnboardingScreen from './src/screens/OnboardingScreen';
+import DashboardScreen from './src/screens/DashboardScreen';
+import GitaExplorerScreen from './src/screens/GitaExplorerScreen';
+import GitaChapterScreen from './src/screens/GitaChapterScreen';
 
 import { analyseKarma } from './src/api/client';
 import { fetchMe } from './src/api/client';
@@ -58,6 +61,7 @@ export default function App() {
   const [lensPrefill, setLensPrefill] = useState('');
   const [journeyDayCtx, setJourneyDayCtx] = useState({ progressId: null, dayNumber: 1 });
   const [journeyTick, setJourneyTick] = useState(0);
+  const [explorerChapter, setExplorerChapter] = useState(1);
 
   // Onboarding gate + reflection migration on mount.
   useEffect(() => {
@@ -153,8 +157,36 @@ export default function App() {
               onOpenJournal={() => setView('journal')}
               onOpenJourneys={() => setView('journeys')}
               onOpenJourneyDay={openJourneyDay}
+              onOpenDashboard={() => setView('dashboard')}
+              onOpenExplorer={() => setView('gita_explorer')}
               reflectionCount={reflections.length}
               journeyTick={journeyTick}
+            />
+          )}
+
+          {view === 'gita_explorer' && (
+            <GitaExplorerScreen
+              onBack={() => setView('home')}
+              onOpenChapter={(n) => {
+                setExplorerChapter(n);
+                setView('gita_chapter');
+              }}
+            />
+          )}
+
+          {view === 'gita_chapter' && (
+            <GitaChapterScreen
+              key={explorerChapter}
+              chapterNumber={explorerChapter}
+              onBack={() => setView('gita_explorer')}
+              onOpenLens={openLens}
+            />
+          )}
+
+          {view === 'dashboard' && (
+            <DashboardScreen
+              onBack={() => setView('home')}
+              onOpenLens={openLens}
             />
           )}
 

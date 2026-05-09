@@ -126,6 +126,32 @@ export async function fetchWelcomeVerse() {
   return jsonOrThrow(r);
 }
 
+// ─────────────────────────────────────────────────────────────────────────
+// Dashboard
+// ─────────────────────────────────────────────────────────────────────────
+export async function fetchDashboard() {
+  const r = await fetch(`${API_BASE}/api/dashboard`, { headers: headers() });
+  return jsonOrThrow(r);
+}
+
+// ─────────────────────────────────────────────────────────────────────────
+// Gita Explorer
+// ─────────────────────────────────────────────────────────────────────────
+export async function fetchChapters() {
+  const r = await fetch(`${API_BASE}/api/gita/chapters`, { headers: headers() });
+  return jsonOrThrow(r);
+}
+
+export async function fetchChapter(chapterNumber) {
+  const r = await fetch(`${API_BASE}/api/gita/chapters/${chapterNumber}`, { headers: headers() });
+  return jsonOrThrow(r);
+}
+
+export async function fetchVerse(verseId) {
+  const r = await fetch(`${API_BASE}/api/gita/verses/${verseId}`, { headers: headers() });
+  return jsonOrThrow(r);
+}
+
 export async function fetchHomeVerse() {
   const response = await fetch(`${API_BASE}/api/home/verse`, {
     method: 'GET',

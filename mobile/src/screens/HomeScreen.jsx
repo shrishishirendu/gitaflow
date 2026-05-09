@@ -28,7 +28,7 @@ const ARRIVAL_CHIPS = [
 ];
 
 export default function HomeScreen({
-  onOpenLens, onOpenJournal, onOpenJourneys, onOpenJourneyDay,
+  onOpenLens, onOpenJournal, onOpenJourneys, onOpenJourneyDay, onOpenDashboard, onOpenExplorer,
   reflectionCount, journeyTick = 0,
 }) {
   const [dailyVerse, setDailyVerse] = useState(null);
@@ -287,6 +287,24 @@ export default function HomeScreen({
           <Text style={styles.secondaryCount}>Journeys</Text>
         </Pressable>
       ) : null}
+
+      {/* Explore the Gita */}
+      <Pressable onPress={onOpenExplorer} style={styles.secondaryBtn}>
+        <View style={styles.secondaryLeft}>
+          <Feather name="book-open" size={16} color={C.inkSoft} />
+          <Text style={styles.secondaryLabel}>Explore the Gita</Text>
+        </View>
+        <Text style={styles.secondaryCount}>18 chapters</Text>
+      </Pressable>
+
+      {/* Dashboard */}
+      <Pressable onPress={onOpenDashboard} style={styles.secondaryBtn}>
+        <View style={styles.secondaryLeft}>
+          <Feather name="trending-up" size={16} color={C.inkSoft} />
+          <Text style={styles.secondaryLabel}>Your practice, mirrored</Text>
+        </View>
+        <Text style={styles.secondaryCount}>Dashboard</Text>
+      </Pressable>
 
       {/* Journal */}
       <Pressable onPress={onOpenJournal} style={styles.secondaryBtn}>

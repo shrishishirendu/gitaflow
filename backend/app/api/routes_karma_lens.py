@@ -157,12 +157,34 @@ async def analyse(
     try:
         response = _client.messages.create(
             model=ANTHROPIC_MODEL,
-            max_tokens=2000,
+            # Was 2000 originally. With tone-preference voice guidance and
+            # the richer Tamas/Rajas/Sattva path content (especially in
+            # spiritual_reflective and deep_philosophical tones), responses
+            # were occasionally getting truncated mid-JSON. 3500 gives a
+            # comfortable margin without being wasteful.
+            max_tokens=3500,
             system=SYSTEM_PROMPT,
             messages=[{"role": "user", "content": user_message}],
         )
     except Exception as e:  # noqa: BLE001
         raise HTTPException(status_code=502, detail=f"Anthropic API error: {e}")
+
+    # Detect truncation explicitly. When stop_reason == 'max_tokens', the
+    # response was cut short and the JSON will be incomplete. Surface a
+    # clean error rather than failing on json.loads.
+    if getattr(response, "stop_reason", None) == "max_tokens":
+        # Server log for diagnostics — never goes to the user.
+        print(
+            f"[karma_lens] truncated response for user {user['id'][:8]}…; "
+            f"text length={len(' '.join(b.text for b in response.content if getattr(b, 'type', None) == 'text'))}"
+        )
+        raise HTTPException(
+            status_code=503,
+            detail=(
+                "The reflection got cut off mid-thought. "
+                "Please try again — making the situation slightly more focused often helps."
+            ),
+        )
 
     # Pull the first text block from the model's response.
     text = next((b.text for b in response.content if getattr(b, "type", None) == "text"), "")
@@ -170,10 +192,17 @@ async def analyse(
 
     try:
         result = json.loads(cleaned)
-    except json.JSONDecodeError:
+    except json.JSONDecodeError as e:
+        # Server log includes the full raw text + JSONDecodeError details so
+        # we can diagnose. The user-facing error stays clean and warm — no
+        # JSON dump in the UI.
+        print(
+            f"[karma_lens] JSONDecodeError for user {user['id'][:8]}…: {e}\n"
+            f"--- raw text start ---\n{text[:1000]}\n--- raw text end ---"
+        )
         raise HTTPException(
-            status_code=500,
-            detail=f"Could not parse model response as JSON. Raw start: {cleaned[:200]}",
+            status_code=502,
+            detail="The reflection couldn't be parsed. Please try again.",
         )
 
     hydrated = _hydrate_verse(result)

@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import {
-  ArrowRight, Bookmark, Cloud, CloudOff, Feather, PenLine, X, Compass,
+  ArrowRight, Bookmark, Cloud, CloudOff, Feather, PenLine, X, Compass, TrendingUp, BookOpen,
 } from 'lucide-react';
 import {
   fetchReflectionCount,
@@ -40,7 +40,7 @@ const ARRIVAL_CHIPS = [
 ];
 
 export default function HomeView({
-  onOpenLens, onOpenJournal, onOpenJourneys, onOpenJourneyDay,
+  onOpenLens, onOpenJournal, onOpenJourneys, onOpenJourneyDay, onOpenDashboard, onOpenExplorer,
   reflectionCount, dailyVerse, journeyTick = 0,
 }) {
   // Persistence indicator
@@ -421,6 +421,44 @@ export default function HomeView({
           </span>
         </button>
       )}
+
+      {/* ── Gita Explorer ──────────────────────────────────────────────── */}
+      <button
+        onClick={onOpenExplorer}
+        className="w-full mt-3 rounded-md py-4 px-5 flex items-center justify-between transition"
+        style={{
+          background: 'transparent',
+          color: C.inkSoft,
+          border: '1px solid rgba(31,24,20,0.15)',
+        }}
+      >
+        <div className="flex items-center gap-3">
+          <BookOpen size={16} />
+          <span className="font-body text-[14px]">Explore the Gita</span>
+        </div>
+        <span className="font-body text-[12px]" style={{ color: C.inkMute }}>
+          18 chapters
+        </span>
+      </button>
+
+      {/* ── Dashboard entry ────────────────────────────────────────────── */}
+      <button
+        onClick={onOpenDashboard}
+        className="w-full mt-3 rounded-md py-4 px-5 flex items-center justify-between transition"
+        style={{
+          background: 'transparent',
+          color: C.inkSoft,
+          border: '1px solid rgba(31,24,20,0.15)',
+        }}
+      >
+        <div className="flex items-center gap-3">
+          <TrendingUp size={16} />
+          <span className="font-body text-[14px]">Your practice, mirrored</span>
+        </div>
+        <span className="font-body text-[12px]" style={{ color: C.inkMute }}>
+          Dashboard
+        </span>
+      </button>
 
       {/* ── Journal access ─────────────────────────────────────────────── */}
       <button

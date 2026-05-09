@@ -43,7 +43,7 @@ export default function LensView({ onBack, onSubmit, error, initialText = '' }) 
             border: `1px solid ${C.saffron}55`,
           }}
         >
-          Something interrupted: {error}
+          {cleanErrorMessage(error)}
         </div>
       )}
 
@@ -90,4 +90,35 @@ export default function LensView({ onBack, onSubmit, error, initialText = '' }) 
       </button>
     </div>
   );
+}
+
+/**
+ * Sanitize backend error messages for display.
+ *
+ * The backend gives us human-friendly errors (e.g. "The reflection got
+ * cut off mid-thought. Please try again."). But some error shapes can
+ * still leak technical detail — JSON dumps, stack traces, raw exceptions.
+ * This helper guarantees the user only ever sees a clean, warm sentence.
+ */
+function cleanErrorMessage(raw) {
+  if (!raw || typeof raw !== 'string') {
+    return 'Something interrupted. Please try again.';
+  }
+
+  // If the message contains JSON or a stack trace, fall back to generic.
+  const looksTechnical = /[\{\[\\]|"detail":|JSON|Traceback|at .+\..+:\d/.test(raw);
+  if (looksTechnical) {
+    return 'Something interrupted. Please try again in a moment.';
+  }
+
+  // Strip any leading "Backend error N:" or "HTTP M:" preamble that our
+  // API client may have added — leave just the human sentence.
+  const stripped = raw.replace(/^(Backend error \d+:|HTTP \d+:|Error:)\s*/i, '').trim();
+
+  // If after stripping it's empty or weird, fall back.
+  if (!stripped || stripped.length > 200) {
+    return 'Something interrupted. Please try again in a moment.';
+  }
+
+  return stripped;
 }
