@@ -19,7 +19,7 @@ export default function JournalScreen({ reflections, onBack, onOpen }) {
           <Text style={styles.emptyText}>Your saved reflections will live here.</Text>
         </View>
       ) : (
-        reflections.map((r) => {
+        reflections.map((r, index) => {
           const resp = r.response || r.result || {};
           const v = resp.verse;
           const inputText = r.input_text || r.userText || '';
@@ -29,8 +29,13 @@ export default function JournalScreen({ reflections, onBack, onOpen }) {
             day: 'numeric',
             year: 'numeric',
           });
+          // Use the most stable identifier available. Some reflections
+          // come from the backend (with `id`), some from older local
+          // storage (with `analysis_id` or `analysisId`). If everything
+          // is missing, fall back to index — not ideal but always unique.
+          const key = r.id || r.analysis_id || r.analysisId || `reflection-${index}`;
           return (
-            <Pressable key={r.id} onPress={() => onOpen(r)} style={styles.card}>
+            <Pressable key={key} onPress={() => onOpen(r)} style={styles.card}>
               <View style={styles.cardTop}>
                 <Text style={styles.cardDate}>{dateLabel}</Text>
                 {resp.emotion?.primary ? (

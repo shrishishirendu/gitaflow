@@ -85,8 +85,21 @@ def save_reflection(
 ) -> str:
     """Save a reflection (= user marked an analysis as worth keeping).
 
-    Returns the reflection ID.
+    Idempotent: if this user has already saved a reflection for this
+    analysis, returns the existing reflection's ID instead of creating
+    a duplicate. Protects against double-clicks, retried API calls, and
+    race conditions on the client side.
+
+    Returns the reflection ID (existing or newly created).
     """
+    # Check if a reflection already exists for this (user, analysis) pair.
+    existing = conn.execute(
+        "SELECT id FROM reflections WHERE user_id = ? AND analysis_id = ? LIMIT 1",
+        (user_id, analysis_id),
+    ).fetchone()
+    if existing:
+        return existing["id"]
+
     reflection_id = str(uuid.uuid4())
     conn.execute(
         """

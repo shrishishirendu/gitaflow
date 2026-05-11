@@ -31,7 +31,7 @@ export default function GitaExplorerScreen({ onBack, onOpenChapter }) {
       </View>
       <Text style={styles.title}>All 18 chapters.</Text>
       <Text style={styles.subtitle}>
-        Read chronologically, or move toward whatever you need today. Every chapter has its own character.
+        Tap a chapter to read its character and verses.
       </Text>
 
       {loading ? <ActivityIndicator color={C.inkMute} style={{ marginTop: 12 }} /> : null}
@@ -42,24 +42,20 @@ export default function GitaExplorerScreen({ onBack, onOpenChapter }) {
           key={ch.number}
           onPress={() => onOpenChapter(ch.number)}
           style={({ pressed }) => [
-            styles.chapterCard,
+            styles.chapterRow,
             pressed && { transform: [{ scale: 0.99 }] },
           ]}
         >
           <View style={styles.numberCircle}>
             <Text style={styles.numberText}>{ch.number}</Text>
           </View>
-          <View style={{ flex: 1 }}>
-            <View style={styles.chapterHeaderRow}>
-              <Text style={styles.chapterName} numberOfLines={2}>{ch.name_english}</Text>
-              <Text style={styles.verseCount}>{ch.verse_count} VERSES</Text>
-            </View>
-            <Text style={styles.sanskritName}>{ch.name_sanskrit}</Text>
-            <Text style={styles.intro}>{ch.intro}</Text>
-            <View style={styles.readRow}>
-              <Text style={styles.readLabel}>Read chapter</Text>
-              <Feather name="chevron-right" size={12} color={C.gold} />
-            </View>
+          <View style={styles.rowMain}>
+            <Text style={styles.chapterName} numberOfLines={1}>{ch.name_english}</Text>
+            <Text style={styles.sanskritName} numberOfLines={1}>{ch.name_sanskrit}</Text>
+          </View>
+          <View style={styles.rowMeta}>
+            <Text style={styles.verseCount}>{ch.verse_count}V</Text>
+            <Feather name="chevron-right" size={14} color={C.gold} />
           </View>
         </Pressable>
       ))}
@@ -77,46 +73,38 @@ const styles = StyleSheet.create({
   title: { fontFamily: 'Fraunces_400Regular', fontSize: 28, lineHeight: 32, color: C.ink, marginBottom: 8 },
   subtitle: {
     fontFamily: 'Fraunces_300Light_Italic', fontStyle: 'italic',
-    fontSize: 16, lineHeight: 23, color: C.inkMute, marginBottom: 32,
+    fontSize: 16, lineHeight: 23, color: C.inkMute, marginBottom: 24,
   },
 
   err: { fontFamily: 'DMSans_400Regular', fontSize: 12, color: C.rust, marginVertical: 12 },
 
-  chapterCard: {
+  chapterRow: {
     backgroundColor: C.paper,
     borderColor: 'rgba(31,24,20,0.10)', borderWidth: 1,
-    borderRadius: 8, padding: 18,
-    flexDirection: 'row', gap: 14,
-    marginBottom: 12,
+    borderRadius: 8,
+    paddingVertical: 12, paddingHorizontal: 14,
+    flexDirection: 'row', alignItems: 'center', gap: 12,
+    marginBottom: 8,
   },
   numberCircle: {
-    width: 40, height: 40, borderRadius: 20,
+    width: 36, height: 36, borderRadius: 18,
     backgroundColor: C.parchment2,
     borderColor: 'rgba(156,122,58,0.33)', borderWidth: 1,
     alignItems: 'center', justifyContent: 'center',
     flexShrink: 0,
   },
-  numberText: { fontFamily: 'Fraunces_400Regular', fontSize: 16, color: C.ink },
-  chapterHeaderRow: {
-    flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between',
-    gap: 8, marginBottom: 4,
-  },
+  numberText: { fontFamily: 'Fraunces_400Regular', fontSize: 14, color: C.ink },
+  rowMain: { flex: 1, minWidth: 0 },
   chapterName: {
-    fontFamily: 'Fraunces_400Regular', fontSize: 18, lineHeight: 22, color: C.ink,
-    flex: 1,
-  },
-  verseCount: {
-    fontFamily: 'DMSans_400Regular', fontSize: 10, letterSpacing: 1.8,
-    color: C.inkMute, paddingTop: 4,
+    fontFamily: 'Fraunces_400Regular', fontSize: 16, lineHeight: 20, color: C.ink,
   },
   sanskritName: {
     fontFamily: 'DMSans_400Regular', fontStyle: 'italic',
-    fontSize: 11, color: C.inkMute, marginBottom: 10,
+    fontSize: 11, color: C.inkMute, marginTop: 2,
   },
-  intro: {
-    fontFamily: 'DMSans_400Regular', fontSize: 13, lineHeight: 20, color: C.inkSoft,
-    marginBottom: 10,
+  rowMeta: { flexDirection: 'row', alignItems: 'center', gap: 6, flexShrink: 0 },
+  verseCount: {
+    fontFamily: 'DMSans_400Regular', fontSize: 10, letterSpacing: 1.8,
+    color: C.inkMute,
   },
-  readRow: { flexDirection: 'row', alignItems: 'center', gap: 4 },
-  readLabel: { fontFamily: 'DMSans_400Regular', fontSize: 12, color: C.gold },
 });

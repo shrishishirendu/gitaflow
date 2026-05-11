@@ -205,11 +205,17 @@ function WelcomeStep({ onContinue }) {
         Welcome to GitaFlow.
       </h1>
       <p
-        className="font-display text-[16px] leading-[1.45] mb-8"
+        className="font-display text-[16px] leading-[1.45] mb-4"
         style={{ color: C.inkSoft, fontWeight: 350 }}
       >
         A guide for clarity, calmness, and conscious action — rooted in the
         Bhagavad Gita.
+      </p>
+      <p
+        className="font-body text-[12.5px] leading-[1.55] mb-8 italic"
+        style={{ color: C.inkMute }}
+      >
+        For thousands of years, this has been a way of seeing — clarifying impossible decisions, settling restless minds. GitaFlow brings it into your daily life.
       </p>
 
       {/* Begin button */}
@@ -239,16 +245,22 @@ function IntentionStep({ value, onChange, onContinue }) {
   return (
     <div>
       <h2
-        className="font-display text-[28px] leading-[1.1] mb-2"
+        className="font-display text-[28px] leading-[1.1] mb-3"
         style={{ color: C.ink, fontWeight: 400 }}
       >
-        What brings you here?
+        What's heavy right now?
       </h2>
       <p
-        className="font-body text-[13px] mb-8"
+        className="font-display italic text-[15px] leading-[1.55] mb-2"
+        style={{ color: C.inkSoft, fontWeight: 350 }}
+      >
+        Whatever's on your mind, the Gita has met it before — across thousands of years of people facing the same things you are.
+      </p>
+      <p
+        className="font-body text-[12.5px] mb-8"
         style={{ color: C.inkMute }}
       >
-        We'll keep your answer quietly in mind.
+        Pick the one that fits closest. We'll keep it quietly in mind.
       </p>
 
       <div className="space-y-2.5 mb-8">

@@ -165,6 +165,9 @@ function WelcomeStep({ onContinue }) {
       <Text style={styles.welcomeSubtitleSmall}>
         A guide for clarity, calmness, and conscious action — rooted in the Bhagavad Gita.
       </Text>
+      <Text style={styles.welcomeHook}>
+        For thousands of years, this has been a way of seeing — clarifying impossible decisions, settling restless minds. GitaFlow brings it into your daily life.
+      </Text>
 
       <Pressable onPress={onContinue} style={styles.beginBtnInline}>
         <Text style={styles.beginBtnLabel}>Begin</Text>
@@ -183,8 +186,11 @@ function WelcomeStep({ onContinue }) {
 function IntentionStep({ value, onChange, onContinue }) {
   return (
     <View>
-      <Text style={styles.stepTitle}>What brings you here?</Text>
-      <Text style={styles.stepSub}>We'll keep your answer quietly in mind.</Text>
+      <Text style={styles.stepTitle}>What's heavy right now?</Text>
+      <Text style={styles.stepHook}>
+        Whatever's on your mind, the Gita has met it before — across thousands of years of people facing the same things you are.
+      </Text>
+      <Text style={styles.stepSub}>Pick the one that fits closest. We'll keep it quietly in mind.</Text>
 
       <View style={{ marginBottom: 24 }}>
         {INTENTIONS.map(({ value: v, label }) => {
@@ -455,6 +461,14 @@ const styles = StyleSheet.create({
     fontSize: 16,
     lineHeight: 23,
     color: C.inkSoft,
+    marginBottom: 16,
+  },
+  welcomeHook: {
+    fontFamily: 'DMSans_400Regular',
+    fontStyle: 'italic',
+    fontSize: 12.5,
+    lineHeight: 19,
+    color: C.inkMute,
     marginBottom: 28,
   },
   beginBtnInline: {
@@ -528,11 +542,19 @@ const styles = StyleSheet.create({
     fontSize: 28,
     lineHeight: 32,
     color: C.ink,
+    marginBottom: 12,
+  },
+  stepHook: {
+    fontFamily: 'Fraunces_300Light_Italic',
+    fontStyle: 'italic',
+    fontSize: 15,
+    lineHeight: 23,
+    color: C.inkSoft,
     marginBottom: 8,
   },
   stepSub: {
     fontFamily: 'DMSans_400Regular',
-    fontSize: 13,
+    fontSize: 12.5,
     color: C.inkMute,
     marginBottom: 32,
   },

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { analyseKarma, fetchHomeVerse, fetchMe } from './api/client';
 import {
   loadReflections,
@@ -36,6 +36,11 @@ export default function App() {
   const [journeyTick, setJourneyTick] = useState(0);
   // Explorer navigation: which chapter is open (1..18) when view='gita_chapter'
   const [explorerChapter, setExplorerChapter] = useState(1);
+  // Guard against rapid Save clicks (button-disabled relies on React state
+  // which only updates after the await — meanwhile the user can fire 10
+  // clicks in 100ms). This ref is synchronous, so it blocks re-entry the
+  // moment the first save starts.
+  const savingRef = useRef(false);
 
   useEffect(() => {
     (async () => {
@@ -77,13 +82,20 @@ export default function App() {
   }
 
   async function handleSave() {
-    if (savedFlag || !result) return;
-    const saved = await saveReflection({
-      analysisId: result.analysis_id, userText, result,
-    });
-    if (saved) {
-      setSavedFlag(true);
-      setReflections((prev) => [saved, ...prev]);
+    // Triple guard: state, payload, and an in-flight ref. The ref is the
+    // only thing that catches rapid clicks before React state updates.
+    if (savedFlag || !result || savingRef.current) return;
+    savingRef.current = true;
+    try {
+      const saved = await saveReflection({
+        analysisId: result.analysis_id, userText, result,
+      });
+      if (saved) {
+        setSavedFlag(true);
+        setReflections((prev) => [saved, ...prev]);
+      }
+    } finally {
+      savingRef.current = false;
     }
   }
 

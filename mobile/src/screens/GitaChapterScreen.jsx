@@ -53,30 +53,53 @@ export default function GitaChapterScreen({ chapterNumber, onBack, onOpenLens })
   );
 }
 
+// Split Sanskrit at uvāca so speaker attribution sits on its own line
+function splitAtUvaca(sanskrit) {
+  if (!sanskrit) return { speaker: null, verse: sanskrit };
+  const idx = sanskrit.indexOf('उवाच');
+  if (idx === -1) return { speaker: null, verse: sanskrit };
+  const speaker = sanskrit.slice(0, idx + 4).trim();
+  const verse = sanskrit.slice(idx + 4).trim();
+  return { speaker, verse };
+}
+
 function VerseCard({ verse, onOpenLens }) {
-  const lensPrefill = `Sitting with BG ${verse.chapter}.${verse.verse}: "${verse.translation || ''}"\n\nWhat I'm bringing to it:\n`;
+  const trans = (verse.translation || '').trim();
+  const simple = (verse.simple_meaning || '').trim();
+  const primaryText = trans || simple;
+  const showSecondaryPlainMeaning = !!trans && !!simple && trans !== simple;
+
+  const lensPrefill = `Sitting with BG ${verse.chapter}.${verse.verse}: "${primaryText}"\n\nWhat I'm bringing to it:\n`;
+
+  const { speaker, verse: verseBody } = splitAtUvaca(verse.sanskrit);
 
   return (
     <View style={styles.verseCard}>
       <Text style={styles.verseKicker}>BG {verse.chapter}.{verse.verse}</Text>
 
+      {/* Sanskrit — split at uvāca when present */}
       {verse.sanskrit ? (
-        <Text style={styles.verseSanskrit}>{verse.sanskrit}</Text>
+        <View style={{ marginBottom: 12 }}>
+          {speaker ? (
+            <Text style={styles.verseSpeaker}>{speaker}</Text>
+          ) : null}
+          <Text style={styles.verseSanskrit}>{verseBody || verse.sanskrit}</Text>
+        </View>
       ) : null}
 
       {verse.transliteration ? (
         <Text style={styles.verseTranslit}>{verse.transliteration}</Text>
       ) : null}
 
-      {verse.translation ? (
-        <Text style={styles.verseTranslation}>"{verse.translation}"</Text>
+      {primaryText ? (
+        <Text style={styles.verseTranslation}>"{primaryText}"</Text>
       ) : null}
 
-      {verse.simple_meaning ? (
+      {showSecondaryPlainMeaning ? (
         <View style={styles.plainBlock}>
           <Text style={styles.plainText}>
             <Text style={styles.plainLabel}>In plain words: </Text>
-            {verse.simple_meaning}
+            {simple}
           </Text>
         </View>
       ) : null}
@@ -110,7 +133,7 @@ function VerseCard({ verse, onOpenLens }) {
         onPress={() => onOpenLens(lensPrefill)}
         style={styles.bringBtn}
       >
-        <Text style={styles.bringBtnLabel}>Bring this to Karma Lens</Text>
+        <Text style={styles.bringBtnLabel}>Let this verse meet your moment</Text>
         <Feather name="chevron-right" size={14} color={C.saffron} />
       </Pressable>
 
@@ -146,6 +169,14 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   verseKicker: { fontFamily: 'DMSans_400Regular', fontSize: 10, letterSpacing: 2.2, color: C.gold, marginBottom: 12 },
+  verseSpeaker: {
+    fontFamily: 'Fraunces_300Light_Italic',
+    fontStyle: 'italic',
+    fontSize: 13,
+    lineHeight: 20,
+    color: C.inkMute,
+    marginBottom: 4,
+  },
   verseSanskrit: {
     fontFamily: 'Fraunces_400Regular', fontSize: 16, lineHeight: 27,
     color: C.ink, marginBottom: 12,

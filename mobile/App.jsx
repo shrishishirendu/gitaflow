@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
@@ -62,6 +62,8 @@ export default function App() {
   const [journeyDayCtx, setJourneyDayCtx] = useState({ progressId: null, dayNumber: 1 });
   const [journeyTick, setJourneyTick] = useState(0);
   const [explorerChapter, setExplorerChapter] = useState(1);
+  // Guard against rapid Save taps — see web App.jsx for rationale
+  const savingRef = useRef(false);
 
   // Onboarding gate + reflection migration on mount.
   useEffect(() => {
@@ -106,15 +108,20 @@ export default function App() {
   }
 
   async function handleSave() {
-    if (savedFlag || !result) return;
-    const saved = await saveReflection({
-      analysisId: result.analysis_id,
-      userText,
-      result,
-    });
-    if (saved) {
-      setSavedFlag(true);
-      setReflections((prev) => [saved, ...prev]);
+    if (savedFlag || !result || savingRef.current) return;
+    savingRef.current = true;
+    try {
+      const saved = await saveReflection({
+        analysisId: result.analysis_id,
+        userText,
+        result,
+      });
+      if (saved) {
+        setSavedFlag(true);
+        setReflections((prev) => [saved, ...prev]);
+      }
+    } finally {
+      savingRef.current = false;
     }
   }
 

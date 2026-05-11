@@ -117,7 +117,9 @@ def _aggregate_reflections(conn: sqlite3.Connection, user_id: str) -> dict:
     ]
 
     # Top verses — hydrate with the actual verse object so the UI can show
-    # them without another lookup
+    # them without another lookup. Include both translation and simple_meaning
+    # so the UI can fall back gracefully when one is empty (in our library,
+    # most verses have simple_meaning populated but translation is empty).
     top_verses = []
     for vid, n in Counter(verse_keys).most_common(5):
         v = _VERSES.get(vid)
@@ -127,7 +129,8 @@ def _aggregate_reflections(conn: sqlite3.Connection, user_id: str) -> dict:
             "verse_id": vid,
             "chapter": v["chapter"],
             "verse": v["verse"],
-            "translation": v.get("translation", ""),
+            "translation": v.get("translation", "") or "",
+            "simple_meaning": v.get("simple_meaning", "") or "",
             "count": n,
         })
 

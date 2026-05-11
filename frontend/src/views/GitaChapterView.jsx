@@ -124,11 +124,31 @@ export default function GitaChapterView({ chapterNumber, onBack, onOpenLens }) {
   );
 }
 
+/**
+ * Split Sanskrit text at uvāca (उवाच = "said/spoke").
+ * Returns { speaker, verse } where speaker is the attribution line
+ * (e.g. "अर्जुन उवाच") and verse is the actual śloka that follows.
+ * If no uvāca found, speaker is null and verse is the full text.
+ */
+function splitAtUvaca(sanskrit) {
+  if (!sanskrit) return { speaker: null, verse: sanskrit };
+  const idx = sanskrit.indexOf('उवाच');
+  if (idx === -1) return { speaker: null, verse: sanskrit };
+  const speaker = sanskrit.slice(0, idx + 4).trim(); // include "उवाच"
+  const verse = sanskrit.slice(idx + 4).trim();
+  return { speaker, verse };
+}
+
 function VerseCard({ verse, onOpenLens }) {
-  // The "Bring this to Karma Lens" prefill — phrased as something the user
-  // would actually type, not robotic. The verse is given as anchor; the
-  // user adds their situation.
-  const lensPrefill = `Sitting with BG ${verse.chapter}.${verse.verse}: "${verse.translation || ''}"\n\nWhat I'm bringing to it:\n`;
+  const trans = (verse.translation || '').trim();
+  const simple = (verse.simple_meaning || '').trim();
+  const primaryText = trans || simple;
+  const showSecondaryPlainMeaning = !!trans && !!simple && trans !== simple;
+
+  const lensPrefill = `Sitting with BG ${verse.chapter}.${verse.verse}: "${primaryText}"\n\nWhat I'm bringing to it:\n`;
+
+  // Split Sanskrit at uvāca so speaker attribution sits on its own line
+  const { speaker, verse: verseBody } = splitAtUvaca(verse.sanskrit);
 
   return (
     <article
@@ -147,14 +167,24 @@ function VerseCard({ verse, onOpenLens }) {
         BG {verse.chapter}.{verse.verse}
       </div>
 
-      {/* Sanskrit */}
+      {/* Sanskrit — split at uvāca when present */}
       {verse.sanskrit && (
-        <p
-          className="font-display text-[16px] leading-[1.7] mb-3"
-          style={{ color: C.ink, fontWeight: 400 }}
-        >
-          {verse.sanskrit}
-        </p>
+        <div className="mb-3">
+          {speaker && (
+            <p
+              className="font-display text-[13px] leading-[1.6] mb-1.5 italic"
+              style={{ color: C.inkMute, fontWeight: 400 }}
+            >
+              {speaker}
+            </p>
+          )}
+          <p
+            className="font-display text-[16px] leading-[1.7]"
+            style={{ color: C.ink, fontWeight: 400 }}
+          >
+            {verseBody || verse.sanskrit}
+          </p>
+        </div>
       )}
 
       {/* Transliteration */}
@@ -167,18 +197,18 @@ function VerseCard({ verse, onOpenLens }) {
         </p>
       )}
 
-      {/* Translation */}
-      {verse.translation && (
+      {/* Primary teaching text (translation if available, else simple_meaning) */}
+      {primaryText && (
         <p
           className="font-display italic text-[16px] leading-[1.5] mb-4"
           style={{ color: C.inkSoft, fontWeight: 350 }}
         >
-          "{verse.translation}"
+          "{primaryText}"
         </p>
       )}
 
-      {/* Plain meaning */}
-      {verse.simple_meaning && (
+      {/* Secondary "In plain words" block — only shown when both exist and differ */}
+      {showSecondaryPlainMeaning && (
         <div
           className="font-body text-[13.5px] leading-[1.55] mb-4 pt-3"
           style={{ color: C.ink, borderTop: '1px solid rgba(31,24,20,0.08)' }}
@@ -186,7 +216,7 @@ function VerseCard({ verse, onOpenLens }) {
           <span className="font-medium" style={{ color: C.saffron }}>
             In plain words:{' '}
           </span>
-          {verse.simple_meaning}
+          {simple}
         </div>
       )}
 
@@ -235,7 +265,7 @@ function VerseCard({ verse, onOpenLens }) {
           border: `1px solid ${C.saffron}55`,
         }}
       >
-        <span className="font-body text-[13px]">Bring this to Karma Lens</span>
+        <span className="font-body text-[13px]">Let this verse meet your moment</span>
         <ChevronRight size={14} />
       </button>
 

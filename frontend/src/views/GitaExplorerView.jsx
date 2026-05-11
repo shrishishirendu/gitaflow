@@ -49,10 +49,10 @@ export default function GitaExplorerView({ onBack, onOpenChapter }) {
         All 18 chapters.
       </h1>
       <p
-        className="font-display italic text-[16px] mb-10 leading-[1.5]"
+        className="font-display italic text-[16px] mb-8 leading-[1.5]"
         style={{ color: C.inkMute, fontWeight: 350 }}
       >
-        Read chronologically, or move toward whatever you need today. Every chapter has its own character.
+        Tap a chapter to read its character and verses.
       </p>
 
       {loading && (
@@ -62,20 +62,20 @@ export default function GitaExplorerView({ onBack, onOpenChapter }) {
         <p className="font-body text-[12px]" style={{ color: C.rust }}>{err}</p>
       )}
 
-      <div className="space-y-3">
+      <div className="space-y-2">
         {chapters?.map((ch) => (
           <button
             key={ch.number}
             onClick={() => onOpenChapter(ch.number)}
-            className="w-full text-left rounded-md p-5 transition active:scale-[0.99] flex gap-4"
+            className="w-full text-left rounded-md py-3 px-4 transition active:scale-[0.99] flex items-center gap-4"
             style={{
               background: C.paper,
               border: '1px solid rgba(31,24,20,0.10)',
             }}
           >
-            {/* Number column */}
+            {/* Number badge */}
             <div
-              className="flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center font-display text-[16px]"
+              className="flex-shrink-0 w-9 h-9 rounded-full flex items-center justify-center font-display text-[14px]"
               style={{
                 background: C.parchment2,
                 color: C.ink,
@@ -85,41 +85,31 @@ export default function GitaExplorerView({ onBack, onOpenChapter }) {
               {ch.number}
             </div>
 
-            {/* Content column */}
+            {/* Title + Sanskrit */}
             <div className="flex-1 min-w-0">
-              <div className="flex items-baseline justify-between gap-3 mb-1">
-                <h3
-                  className="font-display text-[18px] leading-tight"
-                  style={{ color: C.ink, fontWeight: 400 }}
-                >
-                  {ch.name_english}
-                </h3>
-                <span
-                  className="font-body text-[10px] tracking-[0.18em] flex-shrink-0"
-                  style={{ color: C.inkMute }}
-                >
-                  {ch.verse_count} VERSES
-                </span>
+              <div
+                className="font-display text-[16px] leading-tight truncate"
+                style={{ color: C.ink, fontWeight: 400 }}
+              >
+                {ch.name_english}
               </div>
               <div
-                className="font-body text-[11px] mb-3 italic"
+                className="font-body text-[11px] mt-0.5 italic truncate"
                 style={{ color: C.inkMute }}
               >
                 {ch.name_sanskrit}
               </div>
-              <p
-                className="font-body text-[13px] leading-[1.55]"
-                style={{ color: C.inkSoft }}
+            </div>
+
+            {/* Verse count + chevron */}
+            <div className="flex-shrink-0 flex items-center gap-2">
+              <span
+                className="font-body text-[10px] tracking-[0.18em]"
+                style={{ color: C.inkMute }}
               >
-                {ch.intro}
-              </p>
-              <div
-                className="flex items-center gap-1 mt-3 font-body text-[12px]"
-                style={{ color: C.gold }}
-              >
-                <span>Read chapter</span>
-                <ChevronRight size={12} />
-              </div>
+                {ch.verse_count}V
+              </span>
+              <ChevronRight size={14} style={{ color: C.gold }} />
             </div>
           </button>
         ))}
