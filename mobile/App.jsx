@@ -39,6 +39,7 @@ SplashScreen.preventAutoHideAsync().catch(() => {
 });
 
 export default function App() {
+
   const [fontsLoaded] = useFraunces({
     Fraunces_300Light,
     Fraunces_300Light_Italic,

@@ -1,9 +1,10 @@
 import { Check, ChevronLeft, Heart, Save, Wind } from 'lucide-react';
 import PathCard from '../components/PathCard';
 import VerseCard from '../components/VerseCard';
+import DonationNudge from '../components/DonationNudge';
 import { C } from '../lib/colors';
 
-export default function ResponseView({ result, onBack, onSave, savedFlag }) {
+export default function ResponseView({ result, onBack, onSave, savedFlag, reflectionCount }) {
   // Crisis branch — per spec §7.6 / §15
   if (result.is_crisis) {
     return (
@@ -229,6 +230,7 @@ export default function ResponseView({ result, onBack, onSave, savedFlag }) {
           </>
         )}
       </button>
+      <DonationNudge reflectionCount={reflectionCount} />
     </div>
   );
 }

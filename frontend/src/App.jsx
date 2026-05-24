@@ -17,8 +17,10 @@ import OnboardingFlow from './views/OnboardingFlow';
 import DashboardView from './views/DashboardView';
 import GitaExplorerView from './views/GitaExplorerView';
 import GitaChapterView from './views/GitaChapterView';
+import AdminPanel from './views/AdminPanel';
 
 export default function App() {
+  if (window.location.pathname === '/admin') return <AdminPanel />;
   // 'onboarding' | 'home' | 'lens' | 'loading' | 'response' | 'journal' | 'journeys' | 'journey_day'
   // Start with `null` (loading) so we don't flash the wrong screen before
   // /api/users/me returns. Once we know whether onboarded_at is set, we

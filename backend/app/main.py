@@ -10,6 +10,7 @@ from app.api.routes_users import router as users_router
 from app.api.routes_welcome import router as welcome_router
 from app.api.routes_dashboard import router as dashboard_router
 from app.api.routes_gita import router as gita_router
+from app.api.routes_admin import router as admin_router
 from app.db.database import init_db
 
 app = FastAPI(
@@ -45,6 +46,7 @@ app.include_router(users_router, prefix="/api")
 app.include_router(welcome_router, prefix="/api")
 app.include_router(dashboard_router, prefix="/api")
 app.include_router(gita_router, prefix="/api")
+app.include_router(admin_router, prefix="/api")
 
 
 @app.get("/")
