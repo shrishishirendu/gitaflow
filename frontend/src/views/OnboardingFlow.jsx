@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
-import { ArrowRight, ChevronLeft, Feather, Bell, BellOff, Check } from 'lucide-react';
+import { ArrowRight, ChevronLeft, Bell, BellOff, Check } from 'lucide-react';
 import { saveOnboarding, fetchWelcomeVerse } from '../api/client';
 import { C } from '../lib/colors';
+import Logo from '../components/Logo';
 
 /**
  * Four-step onboarding flow shown only to first-time users.
@@ -139,16 +140,11 @@ function WelcomeStep({ onContinue }) {
 
   return (
     <div className="flex flex-col min-h-[78vh]">
-      {/* Small brand mark, top-left rather than orphaned in the middle */}
-      <div className="flex items-center gap-2 mb-10">
-        <div
-          className="w-7 h-7 rounded-full flex items-center justify-center"
-          style={{ background: C.ink }}
-        >
-          <Feather size={14} style={{ color: C.parchment }} />
-        </div>
+      {/* Hero brand mark — centered above the opening verse */}
+      <div className="flex flex-col items-center text-center mb-10 mt-2 fade-up">
+        <Logo size={140} />
         <span
-          className="font-display text-[16px] tracking-tight"
+          className="font-display text-[21px] tracking-tight mt-3"
           style={{ color: C.ink, fontWeight: 500 }}
         >
           GitaFlow

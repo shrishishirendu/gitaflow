@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import {
-  ArrowRight, Bookmark, Cloud, CloudOff, Feather, PenLine, X, Compass, TrendingUp, BookOpen,
+  ArrowRight, Bookmark, Cloud, CloudOff, PenLine, X, Compass, TrendingUp, BookOpen,
 } from 'lucide-react';
+import Logo from '../components/Logo';
 import {
   fetchReflectionCount,
   fetchTodayCheckin,
@@ -133,10 +134,8 @@ export default function HomeView({
   return (
     <div className="px-6 pt-10 pb-32 fade-up">
       {/* Brand mark */}
-      <div className="flex items-center gap-2 mb-10">
-        <div className="w-7 h-7 rounded-full flex items-center justify-center" style={{ background: C.ink }}>
-          <Feather size={14} style={{ color: C.parchment }} />
-        </div>
+      <div className="flex items-center gap-2.5 mb-10">
+        <Logo size={42} />
         <span className="font-display text-[16px] tracking-tight" style={{ color: C.ink, fontWeight: 500 }}>
           GitaFlow
         </span>

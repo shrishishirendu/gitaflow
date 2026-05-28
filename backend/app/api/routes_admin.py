@@ -48,6 +48,21 @@ with open(_VERSES_PATH, encoding="utf-8") as f:
     _VERSES: dict = json.load(f)
 
 
+# All media link columns on verse_media. Kept in one place so presence
+# checks, stats, and defaults stay in sync as fields are added.
+MEDIA_FIELDS = (
+    "youtube_url",
+    "podcast_url",
+    "infographic_url",
+    "recitation_url",
+    "analysis_url",
+)
+
+
+def _has_any_media(media: dict) -> bool:
+    return any(media.get(k) for k in MEDIA_FIELDS)
+
+
 def _get_media(conn: sqlite3.Connection, verse_id: str) -> dict:
     """Get media record for a verse, or empty defaults."""
     row = conn.execute(
@@ -55,30 +70,22 @@ def _get_media(conn: sqlite3.Connection, verse_id: str) -> dict:
     ).fetchone()
     if row:
         return dict(row)
-    return {
-        "verse_id": verse_id,
-        "youtube_url": None,
-        "podcast_url": None,
-        "infographic_url": None,
-    }
+    return {"verse_id": verse_id, **{k: None for k in MEDIA_FIELDS}}
 
 
 def _verse_summary(vid: str, v: dict, media: dict) -> dict:
     """Shape a verse + its media for the admin panel."""
-    has_media = any([
-        media.get("youtube_url"),
-        media.get("podcast_url"),
-        media.get("infographic_url"),
-    ])
     return {
         "verse_id": vid,
         "chapter": v.get("chapter"),
         "verse": v.get("verse"),
         "simple_meaning": (v.get("simple_meaning") or "")[:120],
-        "has_media": has_media,
+        "has_media": _has_any_media(media),
         "youtube_url": media.get("youtube_url"),
         "podcast_url": media.get("podcast_url"),
         "infographic_url": media.get("infographic_url"),
+        "recitation_url": media.get("recitation_url"),
+        "analysis_url": media.get("analysis_url"),
     }
 
 
@@ -124,17 +131,9 @@ def search_verses(
         media = _get_media(conn, vid)
 
         # Media filter
-        if has_media is True and not any([
-            media.get("youtube_url"),
-            media.get("podcast_url"),
-            media.get("infographic_url"),
-        ]):
+        if has_media is True and not _has_any_media(media):
             continue
-        if has_media is False and any([
-            media.get("youtube_url"),
-            media.get("podcast_url"),
-            media.get("infographic_url"),
-        ]):
+        if has_media is False and _has_any_media(media):
             continue
 
         results.append(_verse_summary(vid, v, media))
@@ -180,6 +179,8 @@ def get_verse_admin(
         "youtube_url": media.get("youtube_url"),
         "podcast_url": media.get("podcast_url"),
         "infographic_url": media.get("infographic_url"),
+        "recitation_url": media.get("recitation_url"),
+        "analysis_url": media.get("analysis_url"),
     }
 
 
@@ -187,6 +188,8 @@ class VerseMediaUpdate(BaseModel):
     youtube_url: Optional[str] = None
     podcast_url: Optional[str] = None
     infographic_url: Optional[str] = None
+    recitation_url: Optional[str] = None
+    analysis_url: Optional[str] = None
 
 
 @router.put("/admin/verses/{verse_id}")
@@ -208,18 +211,23 @@ def update_verse_media(
     youtube = body.youtube_url or None
     podcast = body.podcast_url or None
     infographic = body.infographic_url or None
+    recitation = body.recitation_url or None
+    analysis = body.analysis_url or None
 
     conn.execute(
         """
-        INSERT INTO verse_media (verse_id, youtube_url, podcast_url, infographic_url)
-        VALUES (?, ?, ?, ?)
+        INSERT INTO verse_media
+            (verse_id, youtube_url, podcast_url, infographic_url, recitation_url, analysis_url)
+        VALUES (?, ?, ?, ?, ?, ?)
         ON CONFLICT(verse_id) DO UPDATE SET
             youtube_url = excluded.youtube_url,
             podcast_url = excluded.podcast_url,
             infographic_url = excluded.infographic_url,
+            recitation_url = excluded.recitation_url,
+            analysis_url = excluded.analysis_url,
             updated_at = CURRENT_TIMESTAMP
         """,
-        (verse_id, youtube, podcast, infographic),
+        (verse_id, youtube, podcast, infographic, recitation, analysis),
     )
     conn.commit()
 
@@ -240,11 +248,15 @@ def admin_stats(
             COUNT(*) as total_with_media,
             SUM(CASE WHEN youtube_url IS NOT NULL THEN 1 ELSE 0 END) as with_youtube,
             SUM(CASE WHEN podcast_url IS NOT NULL THEN 1 ELSE 0 END) as with_podcast,
-            SUM(CASE WHEN infographic_url IS NOT NULL THEN 1 ELSE 0 END) as with_infographic
+            SUM(CASE WHEN infographic_url IS NOT NULL THEN 1 ELSE 0 END) as with_infographic,
+            SUM(CASE WHEN recitation_url IS NOT NULL THEN 1 ELSE 0 END) as with_recitation,
+            SUM(CASE WHEN analysis_url IS NOT NULL THEN 1 ELSE 0 END) as with_analysis
         FROM verse_media
         WHERE youtube_url IS NOT NULL
            OR podcast_url IS NOT NULL
            OR infographic_url IS NOT NULL
+           OR recitation_url IS NOT NULL
+           OR analysis_url IS NOT NULL
         """
     ).fetchone()
 
@@ -254,4 +266,6 @@ def admin_stats(
         "with_youtube": rows["with_youtube"] if rows else 0,
         "with_podcast": rows["with_podcast"] if rows else 0,
         "with_infographic": rows["with_infographic"] if rows else 0,
+        "with_recitation": rows["with_recitation"] if rows else 0,
+        "with_analysis": rows["with_analysis"] if rows else 0,
     }

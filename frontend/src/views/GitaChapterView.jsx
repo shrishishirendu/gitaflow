@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import {
-  ChevronLeft, ChevronRight, BookOpen, ArrowRight, Play, Mic, Image, X,
+  ChevronLeft, ChevronRight, BookOpen, ArrowRight, Play, Mic, Volume2, Image, X,
 } from 'lucide-react';
 import { fetchChapter } from '../api/client';
 import { C } from '../lib/colors';
@@ -142,7 +142,23 @@ function VerseCard({ verse, onOpenLens }) {
         </div>
       )}
 
-      {/* Infographic thumbnail */}
+      {/* 1. Recitation — your voice, leads the media */}
+      {verse.recitation_url && (
+        <div className="mb-4">
+          <a
+            href={verse.recitation_url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-1.5 font-body text-[13px]"
+            style={{ color: C.gold }}
+          >
+            <Volume2 size={12} />
+            <span>Listen to recitation</span>
+          </a>
+        </div>
+      )}
+
+      {/* 2. Infographic thumbnail */}
       {verse.infographic_url && (
         <div className="mb-4">
           {imgExpanded ? (
@@ -175,21 +191,9 @@ function VerseCard({ verse, onOpenLens }) {
         </div>
       )}
 
-      {/* Media links row */}
-      {(verse.youtube_url || verse.podcast_url) && (
-        <div className="flex items-center gap-4 mb-4">
-          {verse.youtube_url && (
-            <a
-              href={verse.youtube_url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-1.5 font-body text-[13px]"
-              style={{ color: C.saffron }}
-            >
-              <Play size={12} />
-              <span>Watch explanation</span>
-            </a>
-          )}
+      {/* Media links row — 3. Podcast · 4. Analysis by Shri Shishirendu · 5. Modern day Analysis */}
+      {(verse.podcast_url || verse.analysis_url || verse.youtube_url) && (
+        <div className="flex items-center flex-wrap gap-x-4 gap-y-2 mb-4">
           {verse.podcast_url && (
             <a
               href={verse.podcast_url}
@@ -200,6 +204,30 @@ function VerseCard({ verse, onOpenLens }) {
             >
               <Mic size={12} />
               <span>Listen to podcast</span>
+            </a>
+          )}
+          {verse.analysis_url && (
+            <a
+              href={verse.analysis_url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-1.5 font-body text-[13px]"
+              style={{ color: C.rust }}
+            >
+              <Play size={12} />
+              <span>Analysis by Shri Shishirendu</span>
+            </a>
+          )}
+          {verse.youtube_url && (
+            <a
+              href={verse.youtube_url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-1.5 font-body text-[13px]"
+              style={{ color: C.saffron }}
+            >
+              <Play size={12} />
+              <span>Modern day Analysis</span>
             </a>
           )}
         </div>

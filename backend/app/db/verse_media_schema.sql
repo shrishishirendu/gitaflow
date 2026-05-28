@@ -6,6 +6,8 @@ CREATE TABLE IF NOT EXISTS verse_media (
     youtube_url     TEXT,
     podcast_url     TEXT,
     infographic_url TEXT,
+    recitation_url  TEXT,
+    analysis_url    TEXT,
     created_at      TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at      TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );

@@ -68,6 +68,8 @@ def _verse_for_explorer(vid: str, v: dict, media: dict | None = None) -> dict:
         "youtube_url": m.get("youtube_url"),
         "podcast_url": m.get("podcast_url"),
         "infographic_url": m.get("infographic_url"),
+        "recitation_url": m.get("recitation_url"),
+        "analysis_url": m.get("analysis_url"),
     }
 
 

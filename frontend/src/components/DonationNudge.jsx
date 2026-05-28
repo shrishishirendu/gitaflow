@@ -1,7 +1,7 @@
 import { Heart } from 'lucide-react';
 import { C } from '../lib/colors';
 
-// Replace this with your actual Buy Me a Coffee URL once created
+// Live Buy Me a Coffee page (confirmed 2026-05-28).
 const DONATION_URL = 'https://buymeacoffee.com/gitaflow';
 
 /**

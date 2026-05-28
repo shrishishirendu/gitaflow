@@ -1,5 +1,6 @@
 import { useEffect, useState, useCallback } from 'react';
-import { Search, Save, Youtube, Mic, Image, CheckCircle, XCircle, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Search, Save, Youtube, Mic, Image, Volume2, CheckCircle, XCircle, ChevronLeft, ChevronRight } from 'lucide-react';
+import Logo from '../components/Logo';
 
 const API_BASE = import.meta.env.VITE_API_BASE || '';
 
@@ -139,6 +140,8 @@ function AdminDashboard({ password, onLogout }) {
           youtube_url: selected.youtube_url || null,
           podcast_url: selected.podcast_url || null,
           infographic_url: selected.infographic_url || null,
+          recitation_url: selected.recitation_url || null,
+          analysis_url: selected.analysis_url || null,
         }),
       });
       if (r.ok) {
@@ -160,9 +163,12 @@ function AdminDashboard({ password, onLogout }) {
     <div style={{ fontFamily: 'system-ui', minHeight: '100vh', background: '#f8f6f1' }}>
       {/* Header */}
       <div style={{ background: '#1F1814', color: '#fff', padding: '16px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <div>
-          <span style={{ fontSize: 18, fontWeight: 600 }}>GitaFlow Admin</span>
-          <span style={{ marginLeft: 16, fontSize: 13, opacity: 0.6 }}>Verse Media Manager</span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          <Logo size={34} />
+          <div>
+            <span style={{ fontSize: 18, fontWeight: 600 }}>GitaFlow Admin</span>
+            <span style={{ marginLeft: 16, fontSize: 13, opacity: 0.6 }}>Verse Media Manager</span>
+          </div>
         </div>
         {stats && (
           <div style={{ display: 'flex', gap: 24, fontSize: 13, opacity: 0.85 }}>
@@ -302,20 +308,17 @@ function AdminDashboard({ password, onLogout }) {
                   Media Links
                 </h3>
 
-                <MediaField
-                  icon={<Youtube size={16} color="#e53e3e" />}
-                  label="YouTube Video URL"
-                  placeholder="https://www.youtube.com/watch?v=..."
-                  value={selected.youtube_url || ''}
-                  onChange={v => setSelected(s => ({ ...s, youtube_url: v }))}
-                />
+                {/* Order matches the public verse view:
+                    1. Recitation  2. Infographic  3. Podcast
+                    4. Analysis by Shri Shishirendu (analysis_url)
+                    5. Modern day Analysis (youtube_url) */}
 
                 <MediaField
-                  icon={<Mic size={16} color="#805ad5" />}
-                  label="Podcast Episode URL"
-                  placeholder="https://open.spotify.com/episode/... or any podcast URL"
-                  value={selected.podcast_url || ''}
-                  onChange={v => setSelected(s => ({ ...s, podcast_url: v }))}
+                  icon={<Volume2 size={16} color="#2f855a" />}
+                  label="Recitation Audio URL (your voice)"
+                  placeholder="https://drive.google.com/... or SoundCloud / any audio URL"
+                  value={selected.recitation_url || ''}
+                  onChange={v => setSelected(s => ({ ...s, recitation_url: v }))}
                 />
 
                 <MediaField
@@ -338,6 +341,30 @@ function AdminDashboard({ password, onLogout }) {
                     />
                   </div>
                 )}
+
+                <MediaField
+                  icon={<Mic size={16} color="#805ad5" />}
+                  label="Podcast Episode URL"
+                  placeholder="https://open.spotify.com/episode/... or any podcast URL"
+                  value={selected.podcast_url || ''}
+                  onChange={v => setSelected(s => ({ ...s, podcast_url: v }))}
+                />
+
+                <MediaField
+                  icon={<Youtube size={16} color="#B6502E" />}
+                  label="Analysis by Shri Shishirendu (YouTube)"
+                  placeholder="https://www.youtube.com/watch?v=...  (your personal analysis)"
+                  value={selected.analysis_url || ''}
+                  onChange={v => setSelected(s => ({ ...s, analysis_url: v }))}
+                />
+
+                <MediaField
+                  icon={<Youtube size={16} color="#e53e3e" />}
+                  label="Modern day Analysis (YouTube)"
+                  placeholder="https://www.youtube.com/watch?v=...  (applying the verse to modern life)"
+                  value={selected.youtube_url || ''}
+                  onChange={v => setSelected(s => ({ ...s, youtube_url: v }))}
+                />
 
                 {/* Save button */}
                 <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>

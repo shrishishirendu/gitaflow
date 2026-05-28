@@ -71,6 +71,8 @@ CREATE TABLE IF NOT EXISTS verse_media (
     youtube_url     TEXT,
     podcast_url     TEXT,
     infographic_url TEXT,
+    recitation_url  TEXT,
+    analysis_url    TEXT,
     created_at      TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at      TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
@@ -209,6 +211,11 @@ def init_db() -> None:
     _add_column_if_missing(conn, "users", "intention", "TEXT")
     _add_column_if_missing(conn, "users", "daily_reminder_opt_in", "INTEGER NOT NULL DEFAULT 0")
     _add_column_if_missing(conn, "users", "onboarded_at", "TIMESTAMP")
+
+    # verse_media gained recitation_url (own-voice recitation link) and
+    # analysis_url (separate analysis video) after the original table shipped.
+    _add_column_if_missing(conn, "verse_media", "recitation_url", "TEXT")
+    _add_column_if_missing(conn, "verse_media", "analysis_url", "TEXT")
 
     # Step 3: full schema (creates all indexes — columns now exist)
     conn.executescript(SCHEMA_SQL)
