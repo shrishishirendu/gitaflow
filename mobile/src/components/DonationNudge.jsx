@@ -20,7 +20,7 @@ export default function DonationNudge({ reflectionCount }) {
         <Text style={styles.kicker}>SUSTAIN THIS WORK</Text>
       </View>
       <Text style={styles.message}>
-        GitaFlow is built freely, sustained by those who find it useful.
+        GitaMoment is built freely, sustained by those who find it useful.
       </Text>
       <Pressable
         onPress={() => Linking.openURL(DONATION_URL)}
@@ -30,7 +30,7 @@ export default function DonationNudge({ reflectionCount }) {
         ]}
       >
         <Feather name="heart" size={13} color={C.saffron} />
-        <Text style={styles.btnLabel}>Support GitaFlow</Text>
+        <Text style={styles.btnLabel}>Support GitaMoment</Text>
       </Pressable>
       <Text style={styles.footnote}>
         Every contribution keeps this running. No pressure, ever.

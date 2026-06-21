@@ -1,6 +1,6 @@
 export default {
   expo: {
-    name: 'GitaFlow',
+    name: 'GitaMoment',
     slug: 'gitaflow',
     owner: 'shishirendu',
     version: '0.1.0',

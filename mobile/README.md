@@ -1,6 +1,6 @@
-# GitaFlow Mobile (Expo)
+# GitaMoment Mobile (Expo)
 
-React Native / Expo app for GitaFlow. Talks to the same FastAPI backend as the
+React Native / Expo app for GitaMoment. Talks to the same FastAPI backend as the
 web frontend — both clients hit `/api/karma-lens/analyse`.
 
 ## Setup

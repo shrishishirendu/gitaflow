@@ -2,9 +2,10 @@ import { View, Text, Pressable, ScrollView, StyleSheet } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import PathCard from '../components/PathCard';
 import VerseCard from '../components/VerseCard';
+import DonationNudge from '../components/DonationNudge';
 import { C } from '../lib/colors';
 
-export default function ResponseScreen({ result, onBack, onSave, savedFlag }) {
+export default function ResponseScreen({ result, onBack, onSave, savedFlag, reflectionCount }) {
   // Crisis branch — per spec §7.6 / §15
   if (result.is_crisis) {
     return (
@@ -127,6 +128,8 @@ export default function ResponseScreen({ result, onBack, onSave, savedFlag }) {
           {savedFlag ? 'Saved to your journal' : 'Save reflection'}
         </Text>
       </Pressable>
+
+      <DonationNudge reflectionCount={reflectionCount} />
     </ScrollView>
   );
 }

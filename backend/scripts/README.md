@@ -1,4 +1,4 @@
-# GitaFlow Ingestion Scripts
+# GitaMoment Ingestion Scripts
 
 Tools for building the verse library that powers Karma Lens. Run these
 from the `backend/` directory.

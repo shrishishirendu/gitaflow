@@ -1,4 +1,4 @@
-# GitaFlow Backend
+# GitaMoment Backend
 
 FastAPI service that orchestrates the Karma Lens agent pipeline.
 

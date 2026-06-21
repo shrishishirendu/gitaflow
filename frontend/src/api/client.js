@@ -1,12 +1,19 @@
 // All Anthropic calls happen on the backend. This client just hits the
 // FastAPI endpoints. Vite proxies /api/* to localhost:8000 in dev.
 //
+// API_BASE resolution:
+//   1. VITE_API_BASE — set in Vercel project env for production, or in
+//      frontend/.env.local for local dev (rare — usually the Vite proxy is enough).
+//   2. Production Railway URL — safe default so a forgotten env var on Vercel
+//      doesn't silently break the app.
+//
 // Every request carries an X-Device-Id header that uniquely identifies
 // this browser. The backend uses it to find-or-create a user record.
 
 import { getDeviceId } from '../lib/device';
 
-const API_BASE = import.meta.env.VITE_API_BASE || '';
+const API_BASE =
+  import.meta.env.VITE_API_BASE || 'https://gitaflow-production.up.railway.app';
 
 function headers() {
   return {

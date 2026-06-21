@@ -2,7 +2,7 @@
 fetch_gita_source.py
 ====================
 Downloads the full Bhagavad Gita (all 700 verses) from the public-domain
-gita/gita GitHub repository and normalizes it into a structure GitaFlow
+gita/gita GitHub repository and normalizes it into a structure GitaMoment
 can use as input for tagging.
 
 This is Step 1 of two:
@@ -52,7 +52,7 @@ OUTPUT_PATH = Path(__file__).resolve().parent.parent / "data" / "gita_source.jso
 def fetch_json(url: str) -> list | dict:
     """Fetch JSON from a URL with a sane timeout and helpful error."""
     print(f"  → trying {url}")
-    req = urllib.request.Request(url, headers={"User-Agent": "GitaFlow/0.1"})
+    req = urllib.request.Request(url, headers={"User-Agent": "GitaMoment/0.1"})
     with urllib.request.urlopen(req, timeout=30) as resp:
         return json.loads(resp.read().decode("utf-8"))
 
@@ -142,7 +142,7 @@ def main():
         print("Check your internet connection, then re-run this script.")
         sys.exit(1)
 
-    print("\nNormalizing into GitaFlow's verse schema...")
+    print("\nNormalizing into GitaMoment's verse schema...")
     verses = normalize(raw)
 
     if not verses:

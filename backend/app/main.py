@@ -14,7 +14,7 @@ from app.api.routes_admin import router as admin_router
 from app.db.database import init_db
 
 app = FastAPI(
-    title="GitaFlow API",
+    title="GitaMoment API",
     version="0.2.0",
     description="Bhagavad Gita-inspired guidance — Karma Lens agent pipeline.",
 )
@@ -51,4 +51,4 @@ app.include_router(admin_router, prefix="/api")
 
 @app.get("/")
 def health():
-    return {"status": "ok", "service": "GitaFlow API", "version": "0.2.0"}
+    return {"status": "ok", "service": "GitaMoment API", "version": "0.2.0"}

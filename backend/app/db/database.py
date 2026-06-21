@@ -1,5 +1,5 @@
 """
-SQLite database for GitaFlow.
+SQLite database for GitaMoment.
 
 Design notes:
   - SQLite for MVP per spec §5.4. Production should swap for Postgres.

@@ -7,6 +7,7 @@ import {
 } from './lib/storage';
 import { C } from './lib/colors';
 import HomeView from './views/HomeView';
+import LandingView from './views/LandingView';
 import LensView from './views/LensView';
 import LoadingView from './views/LoadingView';
 import ResponseView from './views/ResponseView';
@@ -51,7 +52,7 @@ export default function App() {
       // existing users aren't trapped on the onboarding screen.
       try {
         const me = await fetchMe();
-        setView(me.onboarded_at ? 'home' : 'onboarding');
+        setView(me.onboarded_at ? 'home' : 'landing');
       } catch {
         setView('home');
       }
@@ -122,6 +123,16 @@ export default function App() {
 
   function bumpJourney() {
     setJourneyTick((t) => t + 1);
+  }
+
+  // Landing renders full-width (no max-w-md wrap) since it's a marketing page
+  // with its own hero layout. Everything else stays inside the narrow column.
+  if (view === 'landing') {
+    return (
+      <div className="font-body grain min-h-screen" style={{ background: C.parchment, color: C.ink }}>
+        <LandingView onBegin={() => setView('onboarding')} />
+      </div>
+    );
   }
 
   return (

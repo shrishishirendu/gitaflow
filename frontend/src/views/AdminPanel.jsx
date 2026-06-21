@@ -2,10 +2,11 @@ import { useEffect, useState, useCallback } from 'react';
 import { Search, Save, Youtube, Mic, Image, Volume2, CheckCircle, XCircle, ChevronLeft, ChevronRight } from 'lucide-react';
 import Logo from '../components/Logo';
 
-const API_BASE = import.meta.env.VITE_API_BASE || '';
+const API_BASE =
+  import.meta.env.VITE_API_BASE || 'https://gitaflow-production.up.railway.app';
 
 /**
- * GitaFlow Admin Panel
+ * GitaMoment Admin Panel
  * Access at: /admin
  * Password set via ADMIN_PASSWORD env var on Railway (default: gitaflow-admin-2026)
  *
@@ -51,7 +52,7 @@ export default function AdminPanel() {
   if (!authenticated) {
     return (
       <div style={{ fontFamily: 'system-ui', maxWidth: 400, margin: '120px auto', padding: 24 }}>
-        <h1 style={{ fontSize: 24, marginBottom: 8 }}>GitaFlow Admin</h1>
+        <h1 style={{ fontSize: 24, marginBottom: 8 }}>GitaMoment Admin</h1>
         <p style={{ color: '#666', marginBottom: 24 }}>Enter your admin password to continue.</p>
         <input
           type="password"
@@ -166,7 +167,7 @@ function AdminDashboard({ password, onLogout }) {
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
           <Logo size={34} />
           <div>
-            <span style={{ fontSize: 18, fontWeight: 600 }}>GitaFlow Admin</span>
+            <span style={{ fontSize: 18, fontWeight: 600 }}>GitaMoment Admin</span>
             <span style={{ marginLeft: 16, fontSize: 13, opacity: 0.6 }}>Verse Media Manager</span>
           </div>
         </div>

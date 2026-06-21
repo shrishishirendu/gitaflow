@@ -36,7 +36,7 @@ export default function DonationNudge({ reflectionCount }) {
         className="font-display italic text-[15px] leading-[1.55] mb-4 mx-auto max-w-[280px]"
         style={{ color: C.inkSoft, fontWeight: 350 }}
       >
-        GitaFlow is built freely, sustained by those who find it useful.
+        GitaMoment is built freely, sustained by those who find it useful.
       </p>
       <a
         href={DONATION_URL}
@@ -50,7 +50,7 @@ export default function DonationNudge({ reflectionCount }) {
         }}
       >
         <Heart size={13} />
-        <span>Support GitaFlow</span>
+        <span>Support GitaMoment</span>
       </a>
       <p
         className="font-body text-[11px] mt-3"

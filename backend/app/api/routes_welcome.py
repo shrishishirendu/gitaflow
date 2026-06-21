@@ -12,7 +12,7 @@ embedded in that file's `_rubric` field for future maintainers.
 Picking by UTC day rather than per-launch:
   - Stable across page reloads (the user's relationship with today's verse
     persists through their day)
-  - Creates a tiny shared moment globally (everyone who opens GitaFlow
+  - Creates a tiny shared moment globally (everyone who opens GitaMoment
     today sees the same opener)
   - Free, deterministic, no Claude calls
 """

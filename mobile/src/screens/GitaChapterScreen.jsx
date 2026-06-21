@@ -107,7 +107,20 @@ function VerseCard({ verse, onOpenLens }) {
         </View>
       ) : null}
 
-      {/* Infographic thumbnail — tap to expand fullscreen */}
+      {/* 1. Recitation — your voice, leads the media */}
+      {verse.recitation_url ? (
+        <View style={styles.recitationRow}>
+          <Pressable
+            onPress={() => Linking.openURL(verse.recitation_url)}
+            style={styles.mediaBtn}
+          >
+            <Feather name="volume-2" size={12} color={C.gold} />
+            <Text style={[styles.mediaBtnLabel, { color: C.gold }]}>Listen to recitation</Text>
+          </Pressable>
+        </View>
+      ) : null}
+
+      {/* 2. Infographic thumbnail — tap to expand fullscreen */}
       {verse.infographic_url ? (
         <View style={styles.infographicBlock}>
           <Pressable
@@ -149,18 +162,9 @@ function VerseCard({ verse, onOpenLens }) {
         </View>
       ) : null}
 
-      {/* Media links */}
-      {(verse.youtube_url || verse.podcast_url) ? (
+      {/* 3. Podcast · 4. Analysis by Shri Shishirendu · 5. Modern day Analysis */}
+      {(verse.podcast_url || verse.analysis_url || verse.youtube_url) ? (
         <View style={styles.mediaRow}>
-          {verse.youtube_url ? (
-            <Pressable
-              onPress={() => Linking.openURL(verse.youtube_url)}
-              style={styles.mediaBtn}
-            >
-              <Feather name="play" size={12} color={C.saffron} />
-              <Text style={styles.mediaBtnLabel}>Watch explanation</Text>
-            </Pressable>
-          ) : null}
           {verse.podcast_url ? (
             <Pressable
               onPress={() => Linking.openURL(verse.podcast_url)}
@@ -168,6 +172,24 @@ function VerseCard({ verse, onOpenLens }) {
             >
               <Feather name="mic" size={12} color={C.inkSoft} />
               <Text style={[styles.mediaBtnLabel, { color: C.inkSoft }]}>Listen to podcast</Text>
+            </Pressable>
+          ) : null}
+          {verse.analysis_url ? (
+            <Pressable
+              onPress={() => Linking.openURL(verse.analysis_url)}
+              style={styles.mediaBtn}
+            >
+              <Feather name="play" size={12} color={C.rust} />
+              <Text style={[styles.mediaBtnLabel, { color: C.rust }]}>Analysis by Shri Shishirendu</Text>
+            </Pressable>
+          ) : null}
+          {verse.youtube_url ? (
+            <Pressable
+              onPress={() => Linking.openURL(verse.youtube_url)}
+              style={styles.mediaBtn}
+            >
+              <Feather name="play" size={12} color={C.saffron} />
+              <Text style={styles.mediaBtnLabel}>Modern day Analysis</Text>
             </Pressable>
           ) : null}
         </View>
@@ -257,7 +279,8 @@ const styles = StyleSheet.create({
   modalImage: { width: '100%', height: '80%' },
 
   // Media links
-  mediaRow: { flexDirection: 'row', alignItems: 'center', gap: 16, marginBottom: 12 },
+  recitationRow: { marginBottom: 12 },
+  mediaRow: { flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap', columnGap: 16, rowGap: 8, marginBottom: 12 },
   mediaBtn: { flexDirection: 'row', alignItems: 'center', gap: 6 },
   mediaBtnLabel: { fontFamily: 'DMSans_400Regular', fontSize: 13, color: C.saffron },
 

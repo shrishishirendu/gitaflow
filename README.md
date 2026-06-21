@@ -1,4 +1,4 @@
-# GitaFlow
+# GitaMoment
 
 > Live the Bhagavad Gita, one decision at a time.
 
@@ -115,4 +115,4 @@ This monolithic-prompt approach is intentional for the MVP — it's faster and c
 
 ## Disclaimers
 
-GitaFlow offers reflection — not professional therapy, medical, legal, or financial advice. The safety guardrails in the system prompt are non-negotiable. See spec §15.
+GitaMoment offers reflection — not professional therapy, medical, legal, or financial advice. The safety guardrails in the system prompt are non-negotiable. See spec §15.

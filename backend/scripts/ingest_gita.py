@@ -2,7 +2,7 @@
 ingest_gita.py
 ==============
 Reads data/gita_source.json (raw verses) and produces app/data/bhagavad_gita.json
-(verses with full GitaFlow tagging metadata: simple_meaning, themes, emotional_tags).
+(verses with full GitaMoment tagging metadata: simple_meaning, themes, emotional_tags).
 
 This script:
   1. Estimates total cost and asks for confirmation BEFORE making API calls
@@ -75,7 +75,7 @@ ALLOWED_EMOTIONAL_TAGS = {
 # Tagging prompt — kept here, not in /prompts, because it's a one-time
 # tooling concern, not a runtime concern. Edit freely.
 # ─────────────────────────────────────────────────────────────────────────
-TAGGING_SYSTEM_PROMPT = f"""You are a Bhagavad Gita scholar tagging verses for an AI guidance app called GitaFlow.
+TAGGING_SYSTEM_PROMPT = f"""You are a Bhagavad Gita scholar tagging verses for an AI guidance app called GitaMoment.
 
 For each verse you receive, return ONE JSON object — no preamble, no markdown fences — with three fields:
 
@@ -313,7 +313,7 @@ def estimate_cost(num_verses: int, model: str) -> str:
 # Main
 # ─────────────────────────────────────────────────────────────────────────
 def main():
-    parser = argparse.ArgumentParser(description="Tag Bhagavad Gita verses for GitaFlow.")
+    parser = argparse.ArgumentParser(description="Tag Bhagavad Gita verses for GitaMoment.")
     parser.add_argument("--force", action="store_true",
                         help="Re-tag every verse, ignoring existing tags. Default: skip already-tagged.")
     parser.add_argument("--chapter", type=int, default=None,

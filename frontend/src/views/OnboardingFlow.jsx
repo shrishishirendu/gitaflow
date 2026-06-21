@@ -147,7 +147,7 @@ function WelcomeStep({ onContinue }) {
           className="font-display text-[21px] tracking-tight mt-3"
           style={{ color: C.ink, fontWeight: 500 }}
         >
-          GitaFlow
+          GitaMoment
         </span>
       </div>
 
@@ -198,7 +198,7 @@ function WelcomeStep({ onContinue }) {
         className="font-display text-[26px] leading-[1.15] mb-2"
         style={{ color: C.ink, fontWeight: 400 }}
       >
-        Welcome to GitaFlow.
+        Welcome to GitaMoment.
       </h1>
       <p
         className="font-display text-[16px] leading-[1.45] mb-4"
@@ -211,7 +211,7 @@ function WelcomeStep({ onContinue }) {
         className="font-body text-[12.5px] leading-[1.55] mb-8 italic"
         style={{ color: C.inkMute }}
       >
-        For thousands of years, this has been a way of seeing — clarifying impossible decisions, settling restless minds. GitaFlow brings it into your daily life.
+        For thousands of years, this has been a way of seeing — clarifying impossible decisions, settling restless minds. GitaMoment brings it into your daily life.
       </p>
 
       {/* Begin button */}
@@ -371,7 +371,7 @@ function ReminderStep({ value, onChange, onFinish, saving, error }) {
         className="font-body text-[13px] mb-8"
         style={{ color: C.inkMute }}
       >
-        We don't send notifications yet, but we can surface a gentle in-app reminder when you next open GitaFlow.
+        We don't send notifications yet, but we can surface a gentle in-app reminder when you next open GitaMoment.
       </p>
 
       <div className="space-y-3 mb-8">
@@ -442,7 +442,7 @@ function ReminderStep({ value, onChange, onFinish, saving, error }) {
         className="w-full rounded-md py-4 px-5 flex items-center justify-center gap-2 font-body text-[14px] transition disabled:opacity-40"
         style={{ background: C.ink, color: C.paper }}
       >
-        <span>{saving ? 'Saving…' : 'Enter GitaFlow'}</span>
+        <span>{saving ? 'Saving…' : 'Enter GitaMoment'}</span>
         {!saving && <ArrowRight size={14} />}
       </button>
     </div>

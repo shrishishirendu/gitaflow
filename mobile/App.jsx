@@ -215,6 +215,7 @@ export default function App() {
               onBack={() => setView(savedFlag ? 'journal' : 'lens')}
               onSave={handleSave}
               savedFlag={savedFlag}
+              reflectionCount={reflections.length}
             />
           )}
 

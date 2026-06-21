@@ -1,7 +1,7 @@
 import logoUrl from '../assets/logo.png';
 
 /**
- * GitaFlow brand logo — a single-line peacock feather crossed with
+ * GitaMoment brand logo — a single-line peacock feather crossed with
  * Krishna's flute, terracotta line art.
  *
  * Single source of truth for the logo asset across the app (header,
@@ -16,7 +16,7 @@ import logoUrl from '../assets/logo.png';
  * NOTE: for the browser favicon and mobile app icon we still want a
  * feather-only crop (the flute is illegible below ~48px).
  */
-export default function Logo({ size = 40, className = '', style = {}, alt = 'GitaFlow' }) {
+export default function Logo({ size = 40, className = '', style = {}, alt = 'GitaMoment' }) {
   return (
     <img
       src={logoUrl}

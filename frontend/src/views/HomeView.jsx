@@ -137,7 +137,7 @@ export default function HomeView({
       <div className="flex items-center gap-2.5 mb-10">
         <Logo size={42} />
         <span className="font-display text-[16px] tracking-tight" style={{ color: C.ink, fontWeight: 500 }}>
-          GitaFlow
+          GitaMoment
         </span>
       </div>
 

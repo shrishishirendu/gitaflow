@@ -7,6 +7,7 @@ import {
   StyleSheet,
 } from 'react-native';
 import { Feather } from '@expo/vector-icons';
+import Logo from '../components/Logo';
 import { saveOnboarding, fetchWelcomeVerse } from '../api/client';
 import { C } from '../lib/colors';
 
@@ -134,10 +135,8 @@ function WelcomeStep({ onContinue }) {
     <View>
       {/* Brand mark — top-left, restrained */}
       <View style={styles.brandRow}>
-        <View style={styles.brandDotSmall}>
-          <Feather name="feather" size={14} color={C.parchment} />
-        </View>
-        <Text style={styles.brandWord}>GitaFlow</Text>
+        <Logo size={32} style={{ marginRight: 8 }} />
+        <Text style={styles.brandWord}>GitaMoment</Text>
       </View>
 
       {/* Verse hero */}
@@ -161,12 +160,12 @@ function WelcomeStep({ onContinue }) {
       {/* Hairline divider */}
       <View style={styles.divider} />
 
-      <Text style={styles.welcomeTitleSmall}>Welcome to GitaFlow.</Text>
+      <Text style={styles.welcomeTitleSmall}>Welcome to GitaMoment.</Text>
       <Text style={styles.welcomeSubtitleSmall}>
         A guide for clarity, calmness, and conscious action — rooted in the Bhagavad Gita.
       </Text>
       <Text style={styles.welcomeHook}>
-        For thousands of years, this has been a way of seeing — clarifying impossible decisions, settling restless minds. GitaFlow brings it into your daily life.
+        For thousands of years, this has been a way of seeing — clarifying impossible decisions, settling restless minds. GitaMoment brings it into your daily life.
       </Text>
 
       <Pressable onPress={onContinue} style={styles.beginBtnInline}>
@@ -289,7 +288,7 @@ function ReminderStep({ value, onChange, onFinish, saving, error }) {
       <Text style={styles.stepTitle}>A small daily nudge?</Text>
       <Text style={styles.stepSub}>
         We don't send notifications yet, but we can surface a gentle in-app
-        reminder when you next open GitaFlow.
+        reminder when you next open GitaMoment.
       </Text>
 
       <View style={{ marginBottom: 24 }}>
@@ -372,7 +371,7 @@ function ReminderStep({ value, onChange, onFinish, saving, error }) {
         style={[styles.continueBtn, saving && { opacity: 0.4 }]}
       >
         <Text style={styles.continueBtnLabel}>
-          {saving ? 'Saving…' : 'Enter GitaFlow'}
+          {saving ? 'Saving…' : 'Enter GitaMoment'}
         </Text>
         {!saving ? <Feather name="arrow-right" size={14} color={C.paper} /> : null}
       </Pressable>

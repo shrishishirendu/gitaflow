@@ -153,7 +153,7 @@ def _should_surface(signals: dict) -> tuple[bool, str]:
 # ─────────────────────────────────────────────────────────────────────────
 # Step 2 — AI: generate a single warm line, only when rules said yes
 # ─────────────────────────────────────────────────────────────────────────
-INSIGHT_SYSTEM_PROMPT = """You are GitaFlow's home-screen voice — a quiet, warm presence that notices the user's pattern of reflection across days.
+INSIGHT_SYSTEM_PROMPT = """You are GitaMoment's home-screen voice — a quiet, warm presence that notices the user's pattern of reflection across days.
 
 Your job: given a user's recent reflection signals, write ONE LINE (10-25 words) that the user will see on their home screen. Not a quote, not advice, not a teaching. A noticing.
 

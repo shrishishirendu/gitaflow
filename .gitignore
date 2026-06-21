@@ -54,3 +54,4 @@ Thumbs.db
 *.zip
 mobile/dist/
 mobile/web-build/
+.vercel

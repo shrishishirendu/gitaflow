@@ -1,5 +1,9 @@
 // Mobile API client. Same endpoints as web; uses fetch + X-Device-Id header.
-// API_BASE comes from EXPO_PUBLIC_API_BASE (LAN IP for Expo Go on a phone).
+// API_BASE resolves in this order:
+//   1. EXPO_PUBLIC_API_BASE (from mobile/.env.local during `expo start`,
+//      or from eas.json `env` block during EAS Build).
+//   2. Constants.expoConfig.extra.apiBase (legacy fallback).
+//   3. Production Railway URL (safe default — works if both above are missing).
 
 import Constants from 'expo-constants';
 import { getDeviceId } from '../lib/device';
@@ -7,7 +11,7 @@ import { getDeviceId } from '../lib/device';
 const API_BASE =
   process.env.EXPO_PUBLIC_API_BASE ||
   Constants.expoConfig?.extra?.apiBase ||
-  'http://localhost:8000';
+  'https://gitaflow-production.up.railway.app';
 
 async function buildHeaders() {
   return {
@@ -18,10 +22,8 @@ async function buildHeaders() {
 
 function networkError() {
   return new Error(
-    `Could not reach backend at ${API_BASE}. ` +
-      `Check that EXPO_PUBLIC_API_BASE in mobile/.env.local points to your ` +
-      `laptop's LAN IP, the backend is running with --host 0.0.0.0, and ` +
-      `your phone is on the same Wi-Fi.`,
+    `Could not reach backend at ${API_BASE}. Please check your internet ` +
+      `connection and try again.`,
   );
 }
 

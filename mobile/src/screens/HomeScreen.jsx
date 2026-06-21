@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Feather } from '@expo/vector-icons';
+import Logo from '../components/Logo';
 import {
   fetchReflectionCount,
   fetchTodayCheckin,
@@ -103,10 +104,8 @@ export default function HomeScreen({
   return (
     <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
       <View style={styles.brandRow}>
-        <View style={styles.brandDot}>
-          <Feather name="feather" size={14} color={C.parchment} />
-        </View>
-        <Text style={styles.brandWord}>GitaFlow</Text>
+        <Logo size={32} style={{ marginRight: 8 }} />
+        <Text style={styles.brandWord}>GitaMoment</Text>
       </View>
 
       <Text style={styles.greeting}>{greeting}.</Text>
